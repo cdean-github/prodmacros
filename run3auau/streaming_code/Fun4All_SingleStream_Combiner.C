@@ -28,7 +28,7 @@
 
 #include <phool/recoConsts.h>
 
-R__LOAD_LIBRARY(libfun4all.so)
+R_LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
@@ -38,7 +38,7 @@ bool isGood(const string &infile);
 int getrunnumber(const string &listfile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
-				   const int runnumber1 = 30117,
+				   const int  /*runnumber1*/ = 30117,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
 				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",
 				   const string &type = "beam",

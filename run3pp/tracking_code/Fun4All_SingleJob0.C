@@ -32,9 +32,9 @@
 #include <tpcqa/TpcLaserQA.h>
 #include <phool/recoConsts.h>
 
-#include <stdio.h>
+#include <cstdio>
 
-R__LOAD_LIBRARY(libfun4all.so)
+R_LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
 R__LOAD_LIBRARY(libintt.so)
