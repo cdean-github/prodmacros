@@ -1,0 +1,32 @@
+
+################################# pp SEED test ################################
+sphnxprod03:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/testing/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/Production2026/prodmacros/testing/rules/
+
+  v666_TRKR_SEED_run3pp:
+    config: v666_ppseed_physics_ana545.yaml
+    runs: [79000 81668]
+    jobprio: 30
+    submit: on
+    dstspider: on
+
+################################################################################
+
+################################# pp SEED test ################################
+sphnxprod04:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/testing/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/Production2026/prodmacros/testing/rules/
+
+  v666_TRKR_SEED_run3pp:
+    config: v666_ppseed_physics_ana545.yaml
+    runs: [79000 81668]
+    jobprio: 30
+    submit: on
+    dstspider: on
+
+################################################################################
