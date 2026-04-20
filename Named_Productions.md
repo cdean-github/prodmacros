@@ -229,11 +229,11 @@ branch_run3oo_calo_pro001_pcdb001_v001
 Commit everything with a reasonable message
 ```bash
 git add .
-git commit -a -m "Setup for calo production using prod.001 and pcdbtag001"
+git commit -a -m "Setup for calo production using prod.001 and pcdb001"
 ```
 And create an annotated lightweight tag, again reusing the name we've given this production. Then push everything to github.
 ```bash
-git tag -a tag_run3oo_calo_pro001_pcdb001_v001 -m "Setup for calo production using prod.001 and pcdbtag001"
+git tag -a tag_run3oo_calo_pro001_pcdb001_v001 -m "Setup for calo production using prod.001 and pcdb001"
 git push --follow-tags
 ```
 
