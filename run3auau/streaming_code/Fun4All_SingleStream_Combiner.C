@@ -254,14 +254,11 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
       auto *inttcalib = new InttCalib("INTTCalib_" + felix);
-      char hotmapfilename[500]; 
-      sprintf(hotmapfilename,"./CALIB_HOTMAP_%s-%08i-%05i.root",type.c_str(), runnumber, 0);
+      char hotmapfilename[500] = std::format("./CALIB_HOTMAP_{}-{:08}-{:05}.root", type, runnumber, 0);
       
-      char bcomapfilename[500];
-      sprintf(bcomapfilename,"./CALIB_BCOMAP_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
+      char bcomapfilename[500] = std::format("./CALIB_BCOMAP_{}-{:08}-{:05}.root", type, runnumber, 0);
 
-      char pngfilename[500];
-      sprintf(pngfilename, "./CALIB_PNG_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
+      char pngfilename[500] = std::format("./CALIB_PNG_{}-{:08}-{:05}.root", type, runnumber, 0);
       
       inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
       inttcalib->SetHotMapCdbFile(hotmapfilename);
@@ -283,8 +280,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   se->registerSubsystem(flag);
 
 
-  char outfile[500];
-  sprintf(outfile,"./%s.root",type.c_str());
+  char outfile[500] = std::format("./{}.root", type);
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
@@ -303,8 +299,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   se->End();
 
-  char histoutfile[500];
-  sprintf(histoutfile,"./HIST_%s-%08i-%05i.root",type.c_str(),runnumber,0);
+  char histoutfile[500] = std::format("./HIST_{}-{:08}-{:05}.root", type, runnumber, 0);
   QAHistManagerDef::saveQARootFile(histoutfile);  
 
   delete se;

@@ -257,18 +257,18 @@ void reconstruct_Kpi_mass()
 
 void Fun4All_JobC(
     const int nEvents = 2,
-    const std::string outfilename = "cosmictrack",
-    const std::string dbtag = "2024p001",
-    const std::string filelist = "filelist.list")
+    const std::string& outfilename = "cosmictrack",
+    const std::string& dbtag = "2024p001",
+    const std::string& filelist = "filelist.list")
 {
   gSystem->Load("libg4dst.so");
 
   ACTSGEOM::mvtx_applymisalignment = true;
   Enable::MVTX_APPLYMISALIGNMENT = true;
   
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(2);
-  auto rc = recoConsts::instance();
+  auto *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
@@ -286,12 +286,11 @@ void Fun4All_JobC(
 	{
 	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
 	   runnumber = runseg.first;
-	   int segment = runseg.second;
 	   rc->set_IntFlag("RUNNUMBER", runnumber);
 	   rc->set_uint64Flag("TIMESTAMP", runnumber);
 	}
       std::string inputname = "InputManager" + std::to_string(i);
-      auto hitsin = new Fun4AllDstInputManager(inputname);
+      auto *hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
       se->registerInputManager(hitsin);
       i++;
@@ -336,7 +335,7 @@ void Fun4All_JobC(
   Tracking_Reco_TrackFit_run2pp("","TRKR_CLUSTER_SEED");
   Tracking_Reco_Vertex_run2pp("TRKR_CLUSTER_SEED");
   
-  auto tpcsiliconqa = new TpcSiliconQA;
+  auto *tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
 
   se->registerSubsystem(new TrackFittingQA);
