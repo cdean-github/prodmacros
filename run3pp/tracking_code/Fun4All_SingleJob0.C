@@ -34,7 +34,7 @@
 
 #include <cstdio>
 
-R_LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
 R__LOAD_LIBRARY(libintt.so)
@@ -46,10 +46,10 @@ R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_SingleJob0(
     const int nEvents = 2,
-    const int runnumber = 41626,
-    const std::string outfilename = "cosmics",
-    const std::string dbtag = "2024p001",
-    const std::string filelist = "filelist.list")
+    const int  /*runnumber*/ = 41626,
+    const std::string& outfilename = "cosmics",
+    const std::string& dbtag = "2024p001",
+    const std::string& filelist = "filelist.list")
 {
 
   gSystem->Load("libg4dst.so");
@@ -62,10 +62,10 @@ void Fun4All_SingleJob0(
   TRACKING::tpc_zero_supp = true;
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
   se->VerbosityDownscale(100); // only print every 1000th event
-  auto rc = recoConsts::instance();
+  auto *rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
   std::string filepath; 
@@ -79,21 +79,20 @@ void Fun4All_SingleJob0(
 	{
 	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
 	   int runNumber = runseg.first;
-	   int segment = runseg.second;
 	   rc->set_IntFlag("RUNNUMBER", runNumber);
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
         
 	}
        if(filepath.find("ebdc") != std::string::npos)
 	{
-	  if(filepath.find("_0_") != std::string::npos or
+	  if(filepath.find("_0_") != std::string::npos ||
 	     filepath.find("_1_") != std::string::npos)
 	    {
 	      process_endpoints = true;
 	    }
 	}
       std::string inputname = "InputManager" + std::to_string(i);
-      auto hitsin = new Fun4AllDstInputManager(inputname);
+      auto *hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
       hitsin->CacheSize(0);
       se->registerInputManager(hitsin);
@@ -125,7 +124,7 @@ void Fun4All_SingleJob0(
     }
 
   std::cout << "Process endpoints is " << process_endpoints << std::endl;
-  ostringstream ebdcname;
+  std::ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
       if(!process_endpoints)
@@ -164,7 +163,7 @@ void Fun4All_SingleJob0(
 
   TPC_LaserClustering();
 
-  auto tpcclusterizer = new TpcClusterizer;
+  auto *tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
   tpcclusterizer->set_rawdata_reco();
@@ -179,15 +178,15 @@ void Fun4All_SingleJob0(
   se->registerSubsystem(new MicromegasClusterQA);
 
 
-  auto mvtx = new MvtxRawHitQA;
+  auto *mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
   
   se->registerSubsystem(new InttQa);
   
-  auto tpc = new TpcRawHitQA;
+  auto *tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
 
-  auto LaserQA = new TpcLaserQA;
+  auto *LaserQA = new TpcLaserQA;
   se->registerSubsystem(LaserQA);
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);

@@ -38,7 +38,7 @@
 
 #include <format>
 
-R_LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
 R__LOAD_LIBRARY(libintt.so)
@@ -188,7 +188,7 @@ void Fun4All_RolloverJob0(
 
   auto *LaserQA = new TpcLaserQA;
   se->registerSubsystem(LaserQA);
-  std::string dstoutname = outfilename;
+  const std::string& dstoutname = outfilename;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", dstoutname);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
@@ -212,7 +212,7 @@ void Fun4All_RolloverJob0(
   hm->CopyRolloverSetting(out);
   std::string histoout = "HIST_" + outfilename;
   hm->setOutfileName(histoout);
-  if ( histdir != "" )
+  if ( !histdir.empty() )
   {
     hm->SetClosingScriptArgs(histdir);
   } else {

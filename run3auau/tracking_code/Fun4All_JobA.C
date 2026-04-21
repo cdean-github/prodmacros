@@ -31,7 +31,7 @@
 
 #include <cstdio>
 
-R_LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
 R__LOAD_LIBRARY(libintt.so)
@@ -41,17 +41,17 @@ R__LOAD_LIBRARY(libtrack_reco.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_JobA(
     const int nEvents = 2,
-    const std::string outfilename = "cosmicsseed",
-    const std::string dbtag = "2024p007",
-    const std::string filelist = "filelist.list")
+    const std::string& outfilename = "cosmicsseed",
+    const std::string& dbtag = "2024p007",
+    const std::string& filelist = "filelist.list")
 {
 
   gSystem->Load("libg4dst.so");
 
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
   se->VerbosityDownscale(10); // only print every 1000th event
-  auto rc = recoConsts::instance();
+  auto *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag ); 
@@ -74,7 +74,7 @@ void Fun4All_JobA(
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
 	}
       std::string inputname = "InputManager" + std::to_string(i);
-      auto hitsin = new Fun4AllDstInputManager(inputname);
+      auto *hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
       se->registerInputManager(hitsin);
       i++;
@@ -118,7 +118,7 @@ void Fun4All_JobA(
 /*
    * Silicon Seeding
    */
-  auto silicon_Seeding = new PHActsSiliconSeeding;
+  auto *silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
   silicon_Seeding->setStrobeRange(-5,5);
   silicon_Seeding->seedAnalysis(false);
@@ -126,14 +126,14 @@ void Fun4All_JobA(
   silicon_Seeding->setinttZSearchWindow(2.0);
   se->registerSubsystem(silicon_Seeding);
 
-  auto merger = new PHSiliconSeedMerger;
+  auto *merger = new PHSiliconSeedMerger;
   merger->Verbosity(0);
   se->registerSubsystem(merger);
 
   /*
    * Tpc Seeding
    */
-  auto seeder = new PHCASeeding("PHCASeeding");
+  auto *seeder = new PHCASeeding("PHCASeeding");
   double fieldstrength = std::numeric_limits<double>::quiet_NaN();  // set by isConstantField if constant
   bool ConstField = isConstantField(G4MAGNET::magfield_tracking, fieldstrength);
   if (ConstField)
@@ -160,7 +160,7 @@ void Fun4All_JobA(
   se->registerSubsystem(seeder);
 
   // expand stubs in the TPC using simple kalman filter
-  auto cprop = new PHSimpleKFProp("PHSimpleKFProp");
+  auto *cprop = new PHSimpleKFProp("PHSimpleKFProp");
   cprop->set_field_dir(G4MAGNET::magfield_rescale);
   if (ConstField)
   {
@@ -182,7 +182,7 @@ void Fun4All_JobA(
   
   // apply preliminary distortion corrections to TPC clusters before crossing is known
   // and refit the trackseeds. Replace KFProp fits with the new fit parameters in the TPC seeds.
-  auto prelim_distcorr = new PrelimDistortionCorrection;
+  auto *prelim_distcorr = new PrelimDistortionCorrection;
   prelim_distcorr->set_pp_mode(true);
   prelim_distcorr->Verbosity(0);
   se->registerSubsystem(prelim_distcorr);
@@ -193,7 +193,7 @@ void Fun4All_JobA(
    */
   // The normal silicon association methods
   // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
-  auto silicon_match = new PHSiliconTpcTrackMatching;
+  auto *silicon_match = new PHSiliconTpcTrackMatching;
   silicon_match->Verbosity(0);
   silicon_match->Verbosity(0);
   silicon_match->set_pp_mode(TRACKING::pp_mode);
@@ -230,7 +230,7 @@ void Fun4All_JobA(
   se->registerSubsystem(silicon_match);
 
   // Match TPC track stubs from CA seeder to clusters in the micromegas layers
-  auto mm_match = new PHMicromegasTpcTrackMatching;
+  auto *mm_match = new PHMicromegasTpcTrackMatching;
   mm_match->Verbosity(0);
   mm_match->set_rphi_search_window_lyr1(3);
   mm_match->set_rphi_search_window_lyr2(15.0);
@@ -256,7 +256,7 @@ void Fun4All_JobA(
 
   se->registerOutputManager(out);
 
-  auto converter = new TrackSeedTrackMapConverter("SiliconSeedConverter");
+  auto *converter = new TrackSeedTrackMapConverter("SiliconSeedConverter");
   // Default set to full SvtxTrackSeeds. Can be set to
   // SiliconTrackSeedContainer or TpcTrackSeedContainer
   converter->setTrackSeedName("SiliconTrackSeedContainer");
@@ -265,7 +265,7 @@ void Fun4All_JobA(
   converter->Verbosity(0);
   se->registerSubsystem(converter);
 
-  auto finder = new PHSimpleVertexFinder("SiliconVertexFinder");
+  auto *finder = new PHSimpleVertexFinder("SiliconVertexFinder");
   finder->Verbosity(0);
   finder->setDcaCut(0.1);
   finder->setTrackPtCut(0.1);
@@ -277,12 +277,12 @@ void Fun4All_JobA(
   finder->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(finder);
 
-  auto siliconqa = new SiliconSeedsQA;
+  auto *siliconqa = new SiliconSeedsQA;
   siliconqa->setTrackMapName("SiliconSvtxTrackMap");
   siliconqa->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(siliconqa);
 
-  auto convertertpc = new TrackSeedTrackMapConverter("TpcSeedConverter");
+  auto *convertertpc = new TrackSeedTrackMapConverter("TpcSeedConverter");
   // Default set to full SvtxTrackSeeds. Can be set to
   // SiliconTrackSeedContainer or TpcTrackSeedContainer
   convertertpc->setTrackSeedName("TpcTrackSeedContainer");
@@ -291,7 +291,7 @@ void Fun4All_JobA(
   convertertpc->Verbosity(0);
   se->registerSubsystem(convertertpc);
 
-  auto findertpc = new PHSimpleVertexFinder("TpcSimpleVertexFinder");
+  auto *findertpc = new PHSimpleVertexFinder("TpcSimpleVertexFinder");
   findertpc->Verbosity(0);
   findertpc->setDcaCut(1);
   findertpc->setTrackPtCut(0.2);
@@ -304,18 +304,18 @@ void Fun4All_JobA(
   findertpc->setVertexMapName("TpcSvtxVertexMap");
   se->registerSubsystem(findertpc);
 
-  auto tpcqa = new TpcSeedsQA;
+  auto *tpcqa = new TpcSeedsQA;
   tpcqa->setTrackMapName("TpcSvtxTrackMap");
   tpcqa->setVertexMapName("TpcSvtxVertexMap");
   tpcqa->setSegment(rc->get_IntFlag("RUNSEGMENT"));
   se->registerSubsystem(tpcqa);
 
-  auto tpcsiliconqa = new TpcSiliconQA;
+  auto *tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
 
 
   
-  auto clusterPruner = new DSTClusterPruning("DSTClusterPruning");
+  auto *clusterPruner = new DSTClusterPruning("DSTClusterPruning");
   se->registerSubsystem(clusterPruner);
   
   se->run(nEvents);

@@ -28,47 +28,53 @@
 
 #include <phool/recoConsts.h>
 
-R_LOAD_LIBRARY(libfun4all.so)
+#include <TSystem.h>
+
+#include <fstream>
+#include <string>
+#include <vector>
+
+R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 R__LOAD_LIBRARY(libintt.so)
 
-bool isGood(const string &infile);
-int getrunnumber(const string &listfile);
+bool isGood(const std::string &infile);
+int getrunnumber(const std::string &listfile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const int  /*runnumber1*/ = 30117,
-				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
-				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",
-				   const string &type = "beam",
+				   const std::string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
+				   const std::string&  /*histdir*/ = "/sphenix/data/data02/sphnxpro/single_streamhist/",
+				   const std::string &type = "beam",
 				   const int neventsper = 100,
-				   const string &dbtag = "newcdbtag",
-				   const string &input_gl1file = "gl1daq.list",
-				   const string &input_tpcfile00 = "tpc00.list",
-				   const string &input_inttfile00 = "intt0.list",
-				   const string &input_mvtxfile00 = "mvtx0.list",
-				   const string &input_tpotfile = "tpot.list")
+				   const std::string &dbtag = "newcdbtag",
+				   const std::string &input_gl1file = "gl1daq.list",
+				   const std::string &input_tpcfile00 = "tpc00.list",
+				   const std::string &input_inttfile00 = "intt0.list",
+				   const std::string &input_mvtxfile00 = "mvtx0.list",
+				   const std::string &input_tpotfile = "tpot.list")
 {
   int registered_subsystems = 0;
 // GL1 which provides the beam clock reference (if we ran with GL1)
-  vector<string> gl1_infile;
+  std::vector<std::string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
 
  
 // MVTX
-  vector<string> mvtx_infile;
+  std::vector<std::string> mvtx_infile;
   mvtx_infile.push_back(input_mvtxfile00);
 
 // INTT
-  vector<string> intt_infile;
+  std::vector<std::string> intt_infile;
   intt_infile.push_back(input_inttfile00);
 
-  vector<string> tpc_infile;
+  std::vector<std::string> tpc_infile;
   tpc_infile.push_back(input_tpcfile00);
 
 // TPOT
-  vector<string> tpot_infile;
+  std::vector<std::string> tpot_infile;
   tpot_infile.push_back(input_tpotfile);
 
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -109,11 +115,11 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 // create and register input managers
   int i = 0;
 
-  for (auto iter : gl1_infile)
+  for (const auto& iter : gl1_infile)
   {
     if (isGood(iter))
     {
-      SingleGl1PoolInput *gl1_sngl = new SingleGl1PoolInput("GL1_" + to_string(i));
+      SingleGl1PoolInput *gl1_sngl = new SingleGl1PoolInput("GL1_" + std::to_string(i));
       //    gl1_sngl->Verbosity(3);
       gl1_sngl->AddListFile(iter);
       in->registerStreamingInput(gl1_sngl, InputManagerType::GL1);
@@ -124,15 +130,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   
   bool isInttStreaming = true;
-  for (auto iter : intt_infile)
+  for (const auto& iter : intt_infile)
   {
     if (isGood(iter))
     {
-      SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
+      SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + std::to_string(i));
       //intt_sngl->Verbosity(3);
    
       /// find the ebdc number from the filename
-      std::string filepath, felix;
+      std::string filepath;
+      std::string felix;
       std::ifstream ifs(iter);
       while(std::getline(ifs, filepath))
       {
@@ -148,13 +155,14 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     }
   }
   i = 0;
-  for (auto iter : mvtx_infile)
+  for (const auto& iter : mvtx_infile)
   {
     if (isGood(iter))
     {
 
       /// find the ebdc number from the filename
-      std::string filepath, felix;
+      std::string filepath;
+      std::string felix;
       std::ifstream ifs(iter);
       while(std::getline(ifs, filepath))
       {
@@ -163,7 +171,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
 
-      SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
+      SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + std::to_string(i));
 //    mvtx_sngl->Verbosity(5);
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
@@ -174,13 +182,14 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     }
   }
   i = 0;
-  for (auto iter : tpc_infile)
+  for (const auto& iter : tpc_infile)
   {
     if (isGood(iter))
     {
 
       /// find the ebdc number from the filename
-      std::string filepath, ebdc;
+      std::string filepath;
+      std::string ebdc;
       std::ifstream ifs(iter);
       while(std::getline(ifs, filepath))
       {
@@ -189,7 +198,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
 
-      SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + to_string(i));
+      SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + std::to_string(i));
 //    tpc_sngl->Verbosity(2);
       //   tpc_sngl->DryRun();
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
@@ -201,11 +210,11 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   }
   i = 0;
 
-  for (auto iter : tpot_infile)
+  for (const auto& iter : tpot_infile)
   {
     if (isGood(iter))
     {
-      SingleMicromegasPoolInput *mm_sngl = new SingleMicromegasPoolInput("MICROMEGAS_" + to_string(i));
+      SingleMicromegasPoolInput *mm_sngl = new SingleMicromegasPoolInput("MICROMEGAS_" + std::to_string(i));
       //   sngl->Verbosity(3);
       mm_sngl->SetBcoRange(10);
       mm_sngl->SetNegativeBco(2);
@@ -231,11 +240,12 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   // tpccheck->SetBcoRange(130);
   // se->registerSubsystem(tpccheck);
 
-  for (auto iter : intt_infile)
+  for (const auto& iter : intt_infile)
   {
     if (isGood(iter))
     {
-      std::string filepath, felix;
+      std::string filepath;
+      std::string felix;
       std::ifstream ifs(iter);
       while(std::getline(ifs, filepath))
       {
@@ -243,7 +253,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	felix = filepath.substr(pos+4, 1);
 	break;
       }
-      auto inttcalib = new InttCalib("INTTCalib_" + felix);
+      auto *inttcalib = new InttCalib("INTTCalib_" + felix);
       char hotmapfilename[500]; 
       sprintf(hotmapfilename,"./CALIB_HOTMAP_%s-%08i-%05i.root",type.c_str(), runnumber, 0);
       
@@ -298,13 +308,13 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   QAHistManagerDef::saveQARootFile(histoutfile);  
 
   delete se;
-  cout << "all done" << endl;
+  std::cout << "all done" << std::endl;
   gSystem->Exit(0);
 }
 
-bool isGood(const string &infile)
+bool isGood(const std::string &infile)
 {
-  ifstream intest;
+  std::ifstream intest;
   intest.open(infile);
   bool goodfile = false;
   if (intest.is_open())
@@ -329,7 +339,7 @@ int getrunnumber(const std::string &listfile)
   std::string filepath;
   std::getline(ifs, filepath);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
   int runnumber = runseg.first;
 //  int segment = abs(runseg.second);
   return runnumber;
