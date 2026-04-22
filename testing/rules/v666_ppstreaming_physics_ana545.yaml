@@ -6,7 +6,7 @@ v666_STREAMING_EVENT_run3pp:
     physicsmode: physics
     dataset:    run3pp
     build:      ana.545
-    dbtag:      pcdb001
+    dbtag:      newcdbtag
     version:    666
 
   input:

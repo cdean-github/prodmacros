@@ -7,13 +7,13 @@ v666_TRKR_CLUSTER_run3pp:
     physicsmode: physics
     dataset:     run3pp
     build:       ana.545
-    dbtag:       pcdb001
+    dbtag:       newcdbtag
     version:     666
 
   input:
     db:          fcr
     table:       datasets
-    intriplet:   ana545_pcd001_v666
+    intriplet:   ana545_nocdbtag_v666
 
   job:
     script:                 run_rolloverjob0.sh
@@ -33,16 +33,16 @@ v666_TRKR_SEED_run3pp:
     physicsmode: physics
     dataset:     run3pp
     build:       ana.545
-    dbtag:       pcdb001
+    dbtag:       newcdbtag
     version:     666
   input:
     db:          fcr
     table:       datasets
-    intriplet:   ana545_pcdb001_v666
+    intriplet:   ana545_newcdbtag_v666
     # cut_segment: 10
 
   job:
-    script:                 run_jobC.sh
+    script:                 run_jobA.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             1000
     payload:                [../tracking_code/*]

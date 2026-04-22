@@ -1,6 +1,6 @@
 
 #______________________________________________________________________________________________________________________
-v666_TRKR_SEED_run3pp:
+v668_TRKR_SEED_run3pp:
   params:
     dsttype:     DST_TRKR_SEED
     period:      run3pp
@@ -8,7 +8,7 @@ v666_TRKR_SEED_run3pp:
     dataset:     run3pp
     build:       ana.545
     dbtag:       newcdbtag
-    version:     666
+    version:     668
 
   input:
     db:          fcr
