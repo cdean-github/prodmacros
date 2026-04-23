@@ -46,11 +46,8 @@ stump=${stump}.root   # Restore .root
 root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${outdir}\",\"${stump}\",${neventsper},${startseg},\"${dbtag}\",\"infile.list\",\"${histdir}\")"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "--- Executing macro"
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
-
-ls -la
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 # echo ./stageout.sh ${logbase}.root ${outdir}
 # ./stageout.sh ${logbase}.root ${outdir}
@@ -60,8 +57,8 @@ ls -la
 #     ./stageout.sh ${hfile} ${histdir}
 # done
 
-ls -la
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-echo All done
 exit ${status_f4a:-1}
 

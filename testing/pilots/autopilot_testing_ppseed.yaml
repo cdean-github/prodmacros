@@ -11,7 +11,7 @@ sphnxprod03:
     runs: [79500 79699]
     jobprio: 30
     submit: on
-    dstspider: off
+    dstspider: on
 
   v667_TRKR_SEED_run3pp:
     config: v667_ppseed_physics_ana545.yaml
@@ -48,7 +48,7 @@ sphnxprod04:
     runs: [80000 81668]
     jobprio: 30
     submit: on
-    dstspider: off
+    dstspider: on
 
   v668_TRKR_SEED_run3pp:
     config: v668_ppseed_physics_ana545.yaml

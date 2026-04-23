@@ -55,13 +55,11 @@ for l in *list; do
     cat $l
 done
 
-echo "--- Executing macro"
-
 root_line="Fun4All_SingleStream_Combiner.C(${nevents},${run},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\");"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -72,11 +70,9 @@ for cfile in CALIB_*.root; do
     echo ./stageout ${cfile} to ${histdir}
     ./stageout.sh ${cfile} ${histdir}
 done
-
 shopt -u nullglob
 
-# There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-echo "All done"
 exit ${status_f4a:-1}
