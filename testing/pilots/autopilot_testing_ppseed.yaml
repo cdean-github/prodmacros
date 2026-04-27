@@ -8,7 +8,7 @@ sphnxprod03:
 
   v666_TRKR_SEED_run3pp:
     config: v666_ppseed_physics_ana545.yaml
-    runs: [79500 79699]
+    runs: [79000 79999]
     jobprio: 30
     submit: on
     dstspider: on
@@ -22,7 +22,7 @@ sphnxprod03:
 
   v668_TRKR_SEED_run3pp:
     config: v668_ppseed_physics_ana545.yaml
-    runs: [79000 79999]
+    runs: [80000 81668]
     jobprio: 30
     submit: off
     dstspider: off
@@ -38,7 +38,7 @@ sphnxprod04:
 
   v666_TRKR_SEED_run3pp:
     config: v666_ppseed_physics_ana545.yaml
-    runs: [80000 80199]
+    runs: [80000 81668]
     jobprio: 30
     submit: on
     dstspider: on
@@ -52,7 +52,7 @@ sphnxprod04:
 
   v668_TRKR_SEED_run3pp:
     config: v668_ppseed_physics_ana545.yaml
-    runs: [80000 81668]
+    runs: [79000 79999]    
     jobprio: 30
     submit: off
     dstspider: off
