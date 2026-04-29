@@ -49,13 +49,7 @@ full_command="root.exe -q -b '${root_line}'"
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
-# echo ./stageout.sh ${logbase}.root ${outdir}
-# ./stageout.sh ${logbase}.root ${outdir}
-
-# for hfile in HIST_*.root; do
-#     echo stageout.sh ${hfile} to ${histdir}
-#     ./stageout.sh ${hfile} ${histdir}
-# done
+## Stage out histos etc. here
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh

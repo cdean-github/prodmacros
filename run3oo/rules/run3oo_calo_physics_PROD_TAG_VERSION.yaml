@@ -10,8 +10,6 @@ prod1_TRIGGERED_EVENT_run3oo:
     version:      VERSION
 
   input:
-    db:             rawr
-    table:          datasets
     min_run_time:   300
     min_run_events: 100000
 
@@ -41,7 +39,6 @@ prod1_CALOFITTING_run3oo:
     version:      VERSION
 
   input:
-    db:           fcr
     table:        datasets
     intriplet:    PROD_TAG_VERSION  # This is the output triplet of the previous rule
 
