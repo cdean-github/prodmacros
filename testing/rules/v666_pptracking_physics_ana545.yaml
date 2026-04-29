@@ -11,8 +11,6 @@ v666_TRKR_CLUSTER_run3pp:
     version:     666
 
   input:
-    db:          fcr
-    table:       datasets
     intriplet:   ana545_nocdbtag_v666
 
   job:
@@ -36,8 +34,6 @@ v666_TRKR_SEED_run3pp:
     dbtag:       newcdbtag
     version:     666
   input:
-    db:          fcr
-    table:       datasets
     intriplet:   ana545_newcdbtag_v666
     # cut_segment: 10
 

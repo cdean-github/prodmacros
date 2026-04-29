@@ -11,8 +11,6 @@ v667_TRKR_SEED_run3pp:
     version:     667
 
   input:
-    db:          fcr
-    table:       datasets
     intriplet:   ana532_2025p009_v001
 
   job:
