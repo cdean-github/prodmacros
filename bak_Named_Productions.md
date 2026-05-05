@@ -6,34 +6,17 @@
   - [Adapt or create rules](#adapt-or-create-rules)
 - [Add to the automated productions](#add-to-the-automated-productions)
 - [Update the branch and tag its tip](#update-the-branch-and-tag-its-tip)
-- [Problem Solving While Running](#problem-solving-while-running)
 - [Appendix: Complete yaml files](#appendix-complete-yaml-files)
   - [Contents of `rules/run3oo_calo_physics_pro001_pcdb001_v001.yaml`](#contents-of-rulesrun3oo_calo_physics_pro001_pcdb001_v001yaml)
   - [Contents of `pilots/autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml`](#contents-of-pilotsautopilot_run3oo_calo_physics_pro001_pcdb001_v001yaml)
 
 ## Getting started
 
-First, define your production type and tag parameters in your terminal. 
-**(Adjust "calo", "tracking", or "streaming" and the tags as needed):**
-
-```bash
-export PROD_TYPE="calo" # or "tracking"
-export PROD_BUILD="pro001"
-export PROD_DBTAG="pcdb001"
-export PROD_VERSION="v001"
-
-# The following variables are derived automatically:
-export PROD_TAG="run3oo_${PROD_TYPE}_${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}"
-export DIR_NAME="dir_${PROD_TAG}"
-export BRANCH_NAME="branch_${PROD_TAG}"
-```
-
-Now, clone the repository and set up your branches. **You can copy/paste this exactly as is:**
-
+Clone the ProdFlow repository in the right location and into an appropriately named folder:
 ```bash
 cd Production2026
-git clone git@github.com:sPHENIX-Collaboration/prodmacros.git $PROD_TAG
-cd $PROD_TAG
+git clone git@github.com:sPHENIX-Collaboration/prodmacros.git run3oo_calo_pro001_pcdb001_v001
+cd run3oo_calo_pro001_pcdb001_v001
 ```
 
 Start by checking out a new branch, with a slightly different name to not confuse git.
@@ -360,3 +343,4 @@ sphnxprod02:
 
 ###############################################################################
 ```
+
