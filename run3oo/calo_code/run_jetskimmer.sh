@@ -38,7 +38,9 @@ outhist=${logbase/DST_JETCALO/HIST_JETQA}.root
 
 root_line="Fun4All_JetSkimmedProductionYear2.C(${nevents},\"${fname_calo}\",\"${fname_zdc}\",\"${outfile_jetcalo}\",\"${outfile_jet}\",\"${outhist}\",\"${dbtag}\")"
 full_command="root.exe -q -b '${root_line}'"
-eval "${full_command}"
+
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 for hfile in HIST_*.root; do
     echo stageout.sh ${hfile} to ${histdir}
@@ -53,5 +55,7 @@ echo ./stageout.sh ${outfile_jet} ${outdir} ${dbid}
 
 ls -la
 
-echo done
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+
 exit ${status_f4a:-1}

@@ -27,8 +27,8 @@ root_line="Fun4All_SingleJob0.C(${nevents},${run},\"${logbase}.root\",\"${dbtag}
 root_line="Fun4All_Prdf_Combiner.C(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\")"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -43,7 +43,9 @@ done
 shopt -u nullglob
 
 # There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
+ls -la
 
-echo "All done"
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+
 exit ${status_f4a:-1}
