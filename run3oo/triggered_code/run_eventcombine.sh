@@ -23,7 +23,6 @@ done
 
 echo "--- Executing macro"
 
-root_line="Fun4All_SingleJob0.C(${nevents},${run},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 root_line="Fun4All_Prdf_Combiner.C(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\")"
 full_command="root.exe -q -b '${root_line}'"
 
