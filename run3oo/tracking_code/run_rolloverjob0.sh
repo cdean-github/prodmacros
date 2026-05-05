@@ -24,20 +24,7 @@ echo "---------------------------------------------"
 make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
 echo "$make_filelists"
 eval "$make_filelists"
-
-shopt -s nullglob
-listsfound="$(echo *.list)"
-shopt -u nullglob
-if [[ -n $listsfound ]]; then
-    echo "Found list file(s):" 
-    ls -la *.list
-    for l in *list; do
-	echo ---
-	echo cat $l
-	cat $l
-    done
-    echo ---
-fi
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
 stump=${logbase%%-*}  # Remove run/segment bit from the name. Same as stump=$(echo "$logbase" | cut -d- -f1)
 stump=${stump}.root   # Restore .root

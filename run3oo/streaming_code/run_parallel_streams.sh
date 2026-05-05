@@ -12,6 +12,7 @@ echo "--- Collecting input files"
 make_filelists="./create_filelist_run_daqhost.py $run $daqhost $inputs"
 echo "$make_filelists"
 eval "$make_filelists"
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
 # Should be exactly one gl1 file and one ebdc, mvtx, or intt file
 # trying to be flexible here, but we have to assume daqhost will always be lowercase and in this family
@@ -44,13 +45,6 @@ fi
 [[ $1 == *ebdc* ]] && ebdcfile=$1
 [[ $1 == *ebdc39* ]] && ebdcfile="" && tpotfile=$1
 shopt -u nullglob
-
-ls -la *.list
-echo end of ls -la '*.list'
-for l in *list; do
-    echo cat $l
-    cat $l
-done
 
 echo "--- Executing macro"
 

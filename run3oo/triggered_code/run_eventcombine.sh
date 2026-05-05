@@ -13,13 +13,7 @@ echo "--- Collecting input files"
 make_filelists="./create_filelist_run_daqhost.py $run $daqhost $inputs"
 echo "$make_filelists"
 eval "$make_filelists"
-
-ls -la *.list
-echo end of ls -la '*.list'
-for l in *list; do
-    echo cat $l
-    cat $l
-done
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
 echo "--- Executing macro"
 

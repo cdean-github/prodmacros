@@ -21,9 +21,8 @@ echo "---------------------------------------------"
 make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
 echo "$make_filelists"
 eval "$make_filelists"
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
-ls -la *.list
-echo end of ls -la '*.list'
 ### Stage input to local
 # for infile in `cat infile_paths.list`; do
 #     cp -v $infile .
