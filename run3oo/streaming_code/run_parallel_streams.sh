@@ -57,15 +57,14 @@ echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 shopt -s nullglob
 for hfile in HIST_*.root; do
     echo ./stageout ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
+    . ./stageout.sh ${hfile} ${histdir}
 done
 for cfile in CALIB_*.root; do
     echo ./stageout ${cfile} to ${histdir}
-    ./stageout.sh ${cfile} ${histdir}
+    . ./stageout.sh ${cfile} ${histdir}
 done
 shopt -u nullglob
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-exit ${status_f4a:-1}

@@ -37,18 +37,17 @@ echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 for hfile in HIST_*.root; do
     echo stageout.sh ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
+    . ./stageout.sh ${hfile} ${histdir}
 done
 
 echo ./stageout.sh ${logbase}.root ${outdir} ${dbid}
-./stageout.sh ${logbase}.root ${outdir} ${dbid}
+. ./stageout.sh ${logbase}.root ${outdir} ${dbid}
 
 echo ./stageout.sh ${outzdc} ${zdcoutdir:-${outdir}} ${zdcdbid:-${dbid}}
-./stageout.sh ${outzdc} ${zdcoutdir:-${outdir}} ${zdcdbid:-${dbid}}
+. ./stageout.sh ${outzdc} ${zdcoutdir:-${outdir}} ${zdcdbid:-${dbid}}
 
 ls -la
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-exit ${status_f4a:-1}

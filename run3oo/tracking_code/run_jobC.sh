@@ -23,11 +23,6 @@ echo "$make_filelists"
 eval "$make_filelists"
 . ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
-### Stage input to local
-# for infile in `cat infile_paths.list`; do
-#     cp -v $infile .
-# done
-
 root_line="Fun4All_JobC.C(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
 
@@ -35,14 +30,13 @@ echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 echo ./stageout.sh ${logbase}.root ${outdir} ${dbid}
-./stageout.sh ${logbase}.root ${outdir} ${dbid}
+. ./stageout.sh ${logbase}.root ${outdir} ${dbid}
 
 for hfile in HIST_*.root; do
     echo stageout.sh ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
+    . ./stageout.sh ${hfile} ${histdir}
 done
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-exit ${status_f4a:-1}
