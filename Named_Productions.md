@@ -8,6 +8,7 @@
 - [Update the branch and tag its tip](#update-the-branch-and-tag-its-tip)
 - [Problem Solving While Running](#problem-solving-while-running)
 - [Appendix: Complete yaml files](#appendix-complete-yaml-files)
+- [Appendix: Job Exit Codes](#appendix-job-exit-codes)
   - [Contents of `rules/run3oo_calo_physics_pro001_pcdb001_v001.yaml`](#contents-of-rulesrun3oo_calo_physics_pro001_pcdb001_v001yaml)
   - [Contents of `pilots/autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml`](#contents-of-pilotsautopilot_run3oo_calo_physics_pro001_pcdb001_v001yaml)
 
@@ -360,3 +361,21 @@ sphnxprod02:
 
 ###############################################################################
 ```
+
+## Appendix: Job Exit Codes
+
+All job scripts report a final exit code via `common_runscript_finish.sh`, which records it in the production database. Codes are designed to identify the failure stage at a glance:
+
+| Code | Stage | Meaning |
+|------|-------|---------|
+| 0 | — | Success |
+| 2 | Setup | Bad arguments or configuration error |
+| 3 | Setup | Unsupported OS / environment setup failed |
+| 10 | Input | No input files found (DB query returned empty) |
+| 11 | Input | Remote file health check failed (missing or wrong size) |
+| 20 | Stage-in | Input file copy failed (dd retries exhausted or source missing) |
+| 21 | Stage-in | Input file md5 mismatch after copy |
+| 30 | Stage-out | Output file not found (macro produced no output) |
+| 31 | Stage-out | Output file copy failed (dd retries exhausted) |
+| 111 | Input | Streaming: wrong number of GL1 or detector list files |
+| other | Macro | Propagated directly from `root.exe` exit code |
