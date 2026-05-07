@@ -24,7 +24,7 @@ if [[ $# != 1 ]] ; then
     echo "Multiple or no GL1 files found:" >&2
     ls -l `echo $@`                        >&2
     echo Stop.                             >&2
-    exit 111
+    status_f4a=111; . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 fi
 gl1file=$1
 
@@ -38,7 +38,7 @@ if [[ $# != 1 ]] ; then
     echo "Multiple or not enough .list files found:"     >&2
     ls -l `echo $@`                        >&2
     echo Stop.                             >&2
-    exit 111
+    status_f4a=111; . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 fi
 [[ $1 == *intt* ]] && inttfile=$1
 [[ $1 == *mvtx* ]] && mvtxfile=$1
