@@ -130,13 +130,13 @@ As usual, you can delete (`git rm`) the unused rule.
 It is quite easy to guess what changes are needed file, namely PROD, TAG and VERSION, plus maybe a few naming and control details.
 Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo_v001`.
 
-The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Calo example:
+The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Note that **`build` requires a period** (e.g. `ana.548`, `pro.001`) — the exception is `new`, which has no period. Calo example:
 ```yaml
 #__________________________________________________________________________________
 pro001_TRIGGERED_EVENT_run3oo_v001:
   params:
     dsttype:      DST_TRIGGERED_EVENT
-    build:        pro001
+    build:        pro.001
     dbtag:        pcdb001
     version:      1
     period:       run3oo
@@ -149,7 +149,7 @@ pro001_TRIGGERED_EVENT_run3oo_v001:
 pro001_CALOFITTING_run3oo_v001:
   params:
     dsttype:      DST_CALOFITTING
-    build:        pro001
+    build:        pro.001
     dbtag:        pcdb001
     version:      1
     period:       run3oo
@@ -173,9 +173,9 @@ It is a good idea to look over the other fields as well. The full contents for b
 You can now submit jobs manually using (adjust the rule name and config path):
 ```bash
 # Calo example:
-create_submission.py --rule pro001_TRIGGERED_EVENT_${PROD_DATASET}_${PROD_VERSION} --config rules/${SET_TYPE_MODE}_${TRIPLET}.yaml --runs 82503 --andgo
+create_submission.py --rule pro001_TRIGGERED_EVENT_run3oo_v001 --config rules/run3oo_calo_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
 # Tracking example:
-create_submission.py --rule pro001_STREAMING_EVENT_${PROD_DATASET}_${PROD_VERSION} --config rules/${SET_TYPE_MODE}_${TRIPLET}.yaml --runs 82503 --andgo
+create_submission.py --rule pro001_STREAMING_EVENT_run3oo_v001 --config rules/run3oo_tracking_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
 ```
 And you could also periodically run `dstspider.py` and `histspider.py` with the same arguments. However, especially for spiders, we want to put this job on autopilot.
 
@@ -183,8 +183,9 @@ And you could also periodically run `dstspider.py` and `histspider.py` with the 
 Start from the appropriate template.
 ```bash
 cd pilots
-git mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+git mv autopilot_run3oo_calo_physics_PROD_TAG_VERSION.yaml autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml
 ```
+As usual, you can delete (`git rm`) the unused rule.
 
 ### Adapt or create rules
 The file needs a top node for any submission host you'd want to run this production on. It starts with paths:
@@ -192,8 +193,8 @@ The file needs a top node for any submission host you'd want to run this product
 sphnxprod01:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/rules
-    submitdir:  /sphenix/data/data03/sphnxpro/production/${PROD_DATASET}/submission/{rule}
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/rules
+    submitdir:  /sphenix/data/data03/sphnxpro/production/run3oo/submission/{rule}
 ```
 Most important here is to change `configbase`. Note that the production submission installation at `prodbase` can also be individualized. `submitdir` is a location for helper caches, so make sure it's not in danger of being full.
 
@@ -201,15 +202,15 @@ Now add an entry for each of the rules we want to run. **Calo** example:
 ```yaml
   # Event combining
   pro001_TRIGGERED_EVENT_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 
   # Waveform fitting
   pro001_CALOFITTING_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 ```
@@ -218,34 +219,39 @@ Now add an entry for each of the rules we want to run. **Calo** example:
 ```yaml
   # Event combining
   pro001_STREAMING_EVENT_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 
   # Clustering
   pro001_TRKR_CLUSTER_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 
   # Seeding
   pro001_TRKR_SEED_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 
   # Track Fitting
   pro001_TRKR_TRACKS_run3oo_v001:
-    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+    config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
+    runs: [82300 82400]
     submit: on
 [...]
 ```
 
-Instead of `runlist`, you can also specify a range with e.g. `runs: [79000 80000]`. The full files in the [Appendix](#appendix-complete-yaml-files) show additional parameters to control the spider(s), monitoring, priority, etc. Also shown is how to run submission and/or spidering of the same job type from multiple submit hosts.
+For production runs, replace `runs` with a `runlist` pointing to a plain-text file of run numbers (one per line):
+```yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/runlist_run3oo_calo_pro001
+```
+
+The full files in the [Appendix](#appendix-complete-yaml-files) show additional parameters to control the spider(s), monitoring, priority, etc. Also shown is how to run submission and/or spidering of the same job type from multiple submit hosts.
 
 ## Add to the automated productions
 The autopilot is run with `production_control.py --steer /path/to/autopilot.yaml`. Instead of adding one such line to the `crontab` of all relevant submission hosts, a master script checks on a text file for all productions that should be run. You can double check that it is active on a given node, and which conterol file it is reading, with
@@ -261,7 +267,7 @@ To add this production to the list, edit `/sphenix/u/sphnxpro/Production2026/act
 cat /sphenix/u/sphnxpro/Production2026/active_productions.txt
 # This file lists the active production steering files for the master cron job.
 # One full path per line. Lines starting with # are ignored.
-/sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/pilots/autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+/sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/pilots/autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml
 ...
 ```
 
