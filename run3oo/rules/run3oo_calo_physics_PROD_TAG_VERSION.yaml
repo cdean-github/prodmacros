@@ -1,5 +1,5 @@
 #______________________________________________________________________________
-PROD_TRIGGERED_EVENT_run3oo:
+PROD_TRIGGERED_EVENT_run3oo_vVERSION:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        PROD
@@ -28,7 +28,7 @@ PROD_TRIGGERED_EVENT_run3oo:
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_CALOFITTING_run3oo:
+PROD_CALOFITTING_run3oo_vVERSION:
   params:
     dsttype:      DST_CALOFITTING
     build:        PROD
@@ -40,7 +40,7 @@ PROD_CALOFITTING_run3oo:
 
   input:
     table:        datasets
-    intriplet:    PROD_TAG_VERSION  # This is the output triplet of the previous rule
+    intriplet:    PROD_TAG_vVERSION  # This is the output triplet of the previous rule
 
   job:
     script:                 run_fitting.sh
@@ -57,7 +57,7 @@ PROD_CALOFITTING_run3oo:
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_JETSKIMMER_run3oo:
+PROD_JETSKIMMER_run3oo_vVERSION:
   params:
     dsttype:     DST_JETCALO
     build:       PROD
@@ -69,7 +69,7 @@ PROD_JETSKIMMER_run3oo:
 
   input:
     table:       datasets
-    intriplet:   PROD_TAG_VERSION
+    intriplet:   PROD_TAG_vVERSION
     indsttype:   DST_CALOFITTING
 
   job:

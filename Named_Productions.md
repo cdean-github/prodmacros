@@ -1,17 +1,17 @@
 - [Getting started](#getting-started)
 - [Macro directories](#macro-directories)
-  - [Sidebar: Comparing to main](#sidebar-comparing-to-main)
 - [Rules](#rules)
 - [Autopilot](#autopilot)
   - [Adapt or create rules](#adapt-or-create-rules)
 - [Add to the automated productions](#add-to-the-automated-productions)
 - [Update the branch and tag its tip](#update-the-branch-and-tag-its-tip)
 - [Problem Solving While Running](#problem-solving-while-running)
+- [Appendix: Comparing to main](#appendix-comparing-to-main)
 - [Appendix: Complete yaml files](#appendix-complete-yaml-files)
-  - [Calo: `rules/${RULES_FILE}`](#calo-rulesrules_file)
-  - [Calo: `pilots/${AUTOPILOT_FILE}`](#calo-pilotsautopilot_file)
-  - [Tracking: `rules/${RULES_FILE}`](#tracking-rulesrules_file)
-  - [Tracking: `pilots/${AUTOPILOT_FILE}`](#tracking-pilotsautopilot_file)
+  - [Calo rules yaml](#calo-rules-yaml)
+  - [Calo autopilot yaml](#calo-autopilot-yaml)
+  - [Tracking rules yaml](#tracking-rules-yaml)
+  - [Tracking autopilot yaml](#tracking-autopilot-yaml)
 - [Appendix: Job Exit Codes](#appendix-job-exit-codes)
 
 ## Getting started
@@ -26,31 +26,26 @@ export PROD_PHYSICSMODE="physics" # or "cosmics", etc.
 export PROD_BUILD="pro001"
 export PROD_DBTAG="pcdb001"
 export PROD_VERSION="v001"
-
-# The following variables are derived automatically:
-export PROD_TAG="${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}"
-export DIR_NAME="dir_${PROD_TAG}"
-export BRANCH_NAME="branch_${PROD_TAG}"
-export RULES_FILE="${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}_${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}.yaml"
-export AUTOPILOT_FILE="autopilot_${RULES_FILE}"
+export SET_TYPE_MODE="${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}"
+export TRIPLET="${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}"
 ```
 
 Now, clone the repository and set up your branches. **You can copy/paste this exactly as is:**
 
 ```bash
 cd Production2026
-git clone git@github.com:sPHENIX-Collaboration/prodmacros.git $PROD_TAG
-cd $PROD_TAG
+git clone git@github.com:sPHENIX-Collaboration/prodmacros.git ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
+cd ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 ```
 
 Start by checking out a new branch, with a slightly different name to not confuse git.
 Then make a copy of the appropriate directory, again slightly differently named.
 ```bash
-git checkout -b ${BRANCH_NAME}
+git checkout -b branch_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 git branch --show-current
 branch_run3oo_calo_pro001_pcdb001_v001
-cp -r ${PROD_DATASET} ${DIR_NAME}
-git add ${DIR_NAME}
+cp -r ${PROD_DATASET} dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
+git add dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 ```
 Optional: The autopilot control and the general instructions shouldn't be edited here. No other directories are needed at this point either, so we can delete all of it.
 Production specific comments should go into a dedicated README file.
@@ -58,7 +53,7 @@ At this point only the directory `dir_...` and maybe the README should be left.
 
 ```bash
 git rm -r Named*_Productions*.md active_productions.txt run* bak_* testing
-# touch README_${PROD_TAG}.md
+# touch README_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}.md
 ls -1
 dir_run3oo_calo_pro001_pcdb001_v001
 ```
@@ -71,7 +66,7 @@ A production needs:
 These three live in respective subdirectories.
 
 ```bash
-cd ${DIR_NAME}
+cd dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 ls -1
 pilots
 rules
@@ -81,7 +76,7 @@ triggered_code
 calo_code
 ```
 
-## Macro directories
+## Macro (Code) directories
 The `main` branch which we used as a starting point should always be up to date. If you need to make general changes to macros, please do so in the `main` branch first, then come back here and merge them. For production specific "one-off" changes, adjust code in the relevant directories:
 
 - **Calo:** `triggered_code`, `calo_code`
@@ -124,47 +119,21 @@ git rm -rf streaming_code tracking_code
 ```
 
 
-### Sidebar: Comparing to main
-To compare a current file, use `git diff branch-name -- filename`. For example,
-```diff
-git diff main:`${PROD_DATASET}/`triggered_code/Fun4All_Prdf_Combiner.C ./triggered_code/Fun4All_Prdf_Combiner.C
-diff --git a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C b/${DIR_NAME}/triggered_code/Fun4All_Prdf_Combiner.C
-index ec93f7e..1a0f63e 100644
---- a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C
-+++ b/${DIR_NAME}/triggered_code/Fun4All_Prdf_Combiner.C
-@@ -26,6 +26,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
-                            const std::string &outbase = "delme",
-                            const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test")
- {
-+  std::cout << "hello world" << std::endl;
-   Fun4AllServer *se = Fun4AllServer::instance();
-   se->Verbosity(1);
-   se->VerbosityDownscale(100000);
-```
-
-To compare committed changes, you need to use the following syntax instead:
-```bash
-git diff branch1:path/to/file1 branch2:path/to/file2
-````
-
-
 ## Rules
 Start from the appropriate template:
 ```bash
-git mv ${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}_PROD_TAG_VERSION.yaml ${RULES_FILE}
+cd rules
+git mv ${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml ${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
-You can pretty much guess what changes are needed in this file from that `mv` command.
+As usual, you can delete (`git rm`) the unused rule.
 
-**Calo:** rules for event combining (`DST_TRIGGERED_EVENT`) and waveform fitting (`DST_CALOFITTING`).
-By convention, adorn the `dsttype` value with a prefix and postfix; e.g. `pro001_TRIGGERED_EVENT_${PROD_DATASET}` and `pro001_CALOFITTING_${PROD_DATASET}`.
+It is quite easy to guess what changes are needed file, namely PROD, TAG and VERSION, plus maybe a few naming and control details.
+Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo_v001`.
 
-**Tracking:** rules for event combining (`DST_STREAMING_EVENT`), clustering (`DST_TRKR_CLUSTER`), seeding (`DST_TRKR_SEED`), and track fitting (`DST_TRKR_TRACKS`).
-By convention: `pro001_STREAMING_EVENT_${PROD_DATASET}`, `pro001_TRKR_CLUSTER_${PROD_DATASET}`, `pro001_TRKR_SEED_${PROD_DATASET}`, `pro001_TRKR_TRACKS_${PROD_DATASET}`.
-
-Critical fields to adapt are `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Calo example:
+The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Calo example:
 ```yaml
 #__________________________________________________________________________________
-pro001_TRIGGERED_EVENT_run3oo:
+pro001_TRIGGERED_EVENT_run3oo_v001:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        pro001
@@ -177,7 +146,7 @@ pro001_TRIGGERED_EVENT_run3oo:
 
 [...]
 #__________________________________________________________________________________
-pro001_CALOFITTING_run3oo:
+pro001_CALOFITTING_run3oo_v001:
   params:
     dsttype:      DST_CALOFITTING
     build:        pro001
@@ -196,14 +165,6 @@ pro001_CALOFITTING_run3oo:
 Note that `build`, `tag`, and `version` of the two steps don't need to be the same, the connection is made via the `intriplet`. However, if they do differ, please name the base directories, branch, git tag, etc. wisely.
 
 
-<!-- # filesystem: # redirect log while data03 is full
-#   outdir:      "/sphenix/lustre01/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}"
-#   finaldir:    "/sphenix/lustre01/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}"
-#   logdir:     "/sphenix/sim/sim02/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
-#   histdir:  "/sphenix/data/data02/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/hist"
-#   condor:       "/tmp/sphenixprod/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log" -->
-
-
 It is a good idea to look over the other fields as well. The full contents for both calo and tracking are in the [Appendix](#appendix-complete-yaml-files). Of particular interest are `dataset` and `physicsmode` for things like cosmics, and `request_memory`, which allows you to specify which RAM image sizes to try successively before condor gives up. Example:
 ```yaml
     request_memory:         2 GB, 3 GB, 5 GB
@@ -212,17 +173,17 @@ It is a good idea to look over the other fields as well. The full contents for b
 You can now submit jobs manually using (adjust the rule name and config path):
 ```bash
 # Calo example:
-create_submission.py --rule pro001_TRIGGERED_EVENT_${PROD_DATASET} --config rules/${RULES_FILE} --runs 82503 --andgo
+create_submission.py --rule pro001_TRIGGERED_EVENT_${PROD_DATASET}_${PROD_VERSION} --config rules/${SET_TYPE_MODE}_${TRIPLET}.yaml --runs 82503 --andgo
 # Tracking example:
-create_submission.py --rule pro001_STREAMING_EVENT_${PROD_DATASET} --config rules/${RULES_FILE} --runs 82503 --andgo
+create_submission.py --rule pro001_STREAMING_EVENT_${PROD_DATASET}_${PROD_VERSION} --config rules/${SET_TYPE_MODE}_${TRIPLET}.yaml --runs 82503 --andgo
 ```
-You could also periodically run `dstspider.py` and `histspider.py` with the same arguments. However, especially for spiders, we want to put this job on autopilot.
+And you could also periodically run `dstspider.py` and `histspider.py` with the same arguments. However, especially for spiders, we want to put this job on autopilot.
 
 ## Autopilot
 Start from the appropriate template.
 ```bash
 cd pilots
-git mv ${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}_PROD_TAG_VERSION.yaml ${AUTOPILOT_FILE}
+git mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
 
 ### Adapt or create rules
@@ -231,7 +192,7 @@ The file needs a top node for any submission host you'd want to run this product
 sphnxprod01:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/rules
     submitdir:  /sphenix/data/data03/sphnxpro/production/${PROD_DATASET}/submission/{rule}
 ```
 Most important here is to change `configbase`. Note that the production submission installation at `prodbase` can also be individualized. `submitdir` is a location for helper caches, so make sure it's not in danger of being full.
@@ -239,16 +200,16 @@ Most important here is to change `configbase`. Note that the production submissi
 Now add an entry for each of the rules we want to run. **Calo** example:
 ```yaml
   # Event combining
-  pro001_TRIGGERED_EVENT_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_TRIGGERED_EVENT_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 
   # Waveform fitting
-  pro001_CALOFITTING_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_CALOFITTING_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 ```
@@ -256,30 +217,30 @@ Now add an entry for each of the rules we want to run. **Calo** example:
 **Tracking** example:
 ```yaml
   # Event combining
-  pro001_STREAMING_EVENT_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_STREAMING_EVENT_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 
   # Clustering
-  pro001_TRKR_CLUSTER_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_TRKR_CLUSTER_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 
   # Seeding
-  pro001_TRKR_SEED_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_TRKR_SEED_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 
   # Track Fitting
-  pro001_TRKR_TRACKS_run3oo:
-    config: ${RULES_FILE}
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
+  pro001_TRKR_TRACKS_run3oo_v001:
+    config: ${SET_TYPE_MODE}_${TRIPLET}.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/runlist_${PROD_DATASET}_${PROD_TYPE}_${PROD_BUILD}
     submit: on
 [...]
 ```
@@ -300,7 +261,7 @@ To add this production to the list, edit `/sphenix/u/sphnxpro/Production2026/act
 cat /sphenix/u/sphnxpro/Production2026/active_productions.txt
 # This file lists the active production steering files for the master cron job.
 # One full path per line. Lines starting with # are ignored.
-/sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/pilots/${AUTOPILOT_FILE}
+/sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/pilots/autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 ...
 ```
 
@@ -315,17 +276,17 @@ branch_run3oo_calo_pro001_pcdb001_v001
 Commit everything with a reasonable message
 ```bash
 git add .
-git commit -a -m "Setup for ${PROD_TYPE} production: ${PROD_TAG}"
+git commit -a -m "Setup for ${PROD_TYPE} production: ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}"
 ```
 And create an annotated tag, reusing the name we've given this production. Then push everything to github.
 ```bash
-git tag -a tag_${PROD_TAG} -m "Setup for ${PROD_TYPE} production: ${PROD_TAG}"
+git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET} -m "Setup for ${PROD_TYPE} production: ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}"
 git push --follow-tags
 ```
 
 If you need to make corrections later, create a new tag by appending `_fixN`. Ex.:
 ```
-git tag -a tag_${PROD_TAG}_fix1 -m "Added ZDC fix"
+git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}_fix1 -m "Added ZDC fix"
 git push --follow-tags
 ```
 
@@ -345,13 +306,37 @@ done
 <!-- ############################################################################### -->
 
 
+## Appendix: Comparing to main
+To compare a current file, use `git diff branch-name -- filename`. For example,
+```diff
+git diff main:`${PROD_DATASET}/`triggered_code/Fun4All_Prdf_Combiner.C ./triggered_code/Fun4All_Prdf_Combiner.C
+diff --git a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C b/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/triggered_code/Fun4All_Prdf_Combiner.C
+index ec93f7e..1a0f63e 100644
+--- a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C
++++ b/dir_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/triggered_code/Fun4All_Prdf_Combiner.C
+@@ -26,6 +26,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
+                            const std::string &outbase = "delme",
+                            const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test")
+ {
++  std::cout << "hello world" << std::endl;
+   Fun4AllServer *se = Fun4AllServer::instance();
+   se->Verbosity(1);
+   se->VerbosityDownscale(100000);
+```
+
+To compare committed changes, you need to use the following syntax instead:
+```bash
+git diff branch1:path/to/file1 branch2:path/to/file2
+````
+
+
 ## Appendix: Complete yaml files
 
-### Calo: `rules/${RULES_FILE}`
+### Calo rules yaml
 
 ```yaml
 #______________________________________________________________________________
-pro001_TRIGGERED_EVENT_run3oo:
+pro001_TRIGGERED_EVENT_run3oo_v001:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        pro.001
@@ -378,7 +363,7 @@ pro001_TRIGGERED_EVENT_run3oo:
     priority:              '90'
 
 #______________________________________________________________________________
-pro001_CALOFITTING_run3oo:
+pro001_CALOFITTING_run3oo_v001:
   params:
     dsttype:      DST_CALOFITTING
     build:        pro.001
@@ -407,7 +392,7 @@ pro001_CALOFITTING_run3oo:
 
 ```
 
-### Calo: `pilots/${AUTOPILOT_FILE}`
+### Calo autopilot yaml
 
 ```yaml
 ################################# Prod03 #######################################
@@ -415,13 +400,13 @@ pro001_CALOFITTING_run3oo:
 sphnxprod02:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/rules
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
 
   # Event combining
-  pro001_TRIGGERED_EVENT_run3oo:
+  pro001_TRIGGERED_EVENT_run3oo_v001:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_run3oo_calo_pro001
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/runlist_run3oo_calo_pro001
     # runs: [82374 82703]
     #jobprio: 90
     jobprio: 110
@@ -430,9 +415,9 @@ sphnxprod02:
     finishmon: on
 
   # Waveform fitting
-  pro001_CALOFITTING_run3oo:
+  pro001_CALOFITTING_run3oo_v001:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist_run3oo_calo_pro001
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/dir_run3oo_calo_pro001_pcdb001_v001/runlist_run3oo_calo_pro001
     jobprio: 110
     submit: on
     dstspider: on
@@ -441,11 +426,11 @@ sphnxprod02:
 ###############################################################################
 ```
 
-### Tracking: `rules/${RULES_FILE}`
+### Tracking rules yaml
 
 ```yaml
 #______________________________________________________________________________________________________________________
-pro001_STREAMING_EVENT_run3oo:
+pro001_STREAMING_EVENT_run3oo_v001:
   params:
     dsttype:    DST_STREAMING_EVENT
     period:     run3oo
@@ -477,7 +462,7 @@ pro001_STREAMING_EVENT_run3oo:
       condor:            "/tmp/data02/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_CLUSTER_run3oo:
+pro001_TRKR_CLUSTER_run3oo_v001:
   params:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3oo
@@ -503,7 +488,7 @@ pro001_TRKR_CLUSTER_run3oo:
     priority:              '60'
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_SEED_run3oo:
+pro001_TRKR_SEED_run3oo_v001:
   params:
     dsttype:     DST_TRKR_SEED
     period:      run3oo
@@ -529,7 +514,7 @@ pro001_TRKR_SEED_run3oo:
     priority:              '30'
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_TRACKS_run3oo:
+pro001_TRKR_TRACKS_run3oo_v001:
   params:
     dsttype:     DST_TRKR_TRACKS
     period:      run3oo
@@ -557,7 +542,7 @@ pro001_TRKR_TRACKS_run3oo:
 ###############################################################################
 ```
 
-### Tracking: `pilots/${AUTOPILOT_FILE}`
+### Tracking autopilot yaml
 
 ```yaml
 ################################# Prod01 #######################################
@@ -566,12 +551,12 @@ sphnxprod01:
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/dir_run3oo_tracking_pro001_pcdb001_v001/rules
 
   # STREAMING physics
-  pro001_STREAMING_EVENT_run3oo:
+  pro001_STREAMING_EVENT_run3oo_v001:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/dir_run3oo_tracking_pro001_pcdb001_v001/runlist
     #runs: [82372 82703]
     jobprio: 90
     submit: on
@@ -579,9 +564,9 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_CLUSTER physics
-  pro001_TRKR_CLUSTER_run3oo:
+  pro001_TRKR_CLUSTER_run3oo_v001:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/dir_run3oo_tracking_pro001_pcdb001_v001/runlist
     #runs: [82372 82703]
     jobprio: 60
     submit: on
@@ -589,9 +574,9 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_SEED physics
-  pro001_TRKR_SEED_run3oo:
+  pro001_TRKR_SEED_run3oo_v001:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/dir_run3oo_tracking_pro001_pcdb001_v001/runlist
     #runs: [82372 82703]
     jobprio: 30
     submit: on
@@ -599,9 +584,9 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_TRACKS physics
-  pro001_TRKR_TRACKS_run3oo:
+  pro001_TRKR_TRACKS_run3oo_v001:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/${PROD_TAG}/${DIR_NAME}/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/dir_run3oo_tracking_pro001_pcdb001_v001/runlist
     #runs: [82372 82703]
     jobprio: 10
     submit: on
