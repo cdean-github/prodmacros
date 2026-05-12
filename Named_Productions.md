@@ -1,19 +1,18 @@
 - [Getting started](#getting-started)
-- [Macro directories](#macro-directories)
+- [Macro (Code) directories](#macro-code-directories)
 - [Rules](#rules)
 - [Autopilot](#autopilot)
   - [Adapt or create rules](#adapt-or-create-rules)
 - [Add to the automated productions](#add-to-the-automated-productions)
 - [Update the branch and tag its tip](#update-the-branch-and-tag-its-tip)
-- [Problem Solving While Running](#problem-solving-while-running)
 - [Aborting and Cleaning Up a Production](#aborting-and-cleaning-up-a-production)
 - [Appendix: Comparing to main](#appendix-comparing-to-main)
+- [Appendix: Job Exit Codes](#appendix-job-exit-codes)
 - [Appendix: Complete yaml files](#appendix-complete-yaml-files)
   - [Calo rules yaml](#calo-rules-yaml)
   - [Calo autopilot yaml](#calo-autopilot-yaml)
   - [Tracking rules yaml](#tracking-rules-yaml)
   - [Tracking autopilot yaml](#tracking-autopilot-yaml)
-- [Appendix: Job Exit Codes](#appendix-job-exit-codes)
 
 ## Getting started
 
@@ -29,6 +28,9 @@ export PROD_DBTAG="pcdb001"
 export PROD_VERSION="v001"
 export SET_TYPE_MODE="${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}"
 export TRIPLET="${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}"
+## Double-check:
+echo "${SET_TYPE_MODE}  ${TRIPLET}"
+run3oo_calo_physics  pro001_pcdb001_v001
 ```
 
 Now, clone the repository and set up your branches. **You can copy/paste this exactly as is:**
@@ -280,23 +282,27 @@ Double check we're not changing main:
 git branch --show-current
 branch_run3oo_calo_pro001_pcdb001_v001
 ```
-Commit everything with a reasonable message
+Commit everything with a reasonable message — stage the message in a variable first to sanity-check it:
 ```bash
+cmessage="Setup for ${PROD_TYPE} production: ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}"
+echo $cmessage
 git add .
-git commit -a -m "Setup for ${PROD_TYPE} production: ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}"
+git commit -a -m "$cmessage"
 ```
 And create an annotated tag, reusing the name we've given this production. Then push everything to github.
 ```bash
-git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET} -m "Setup for ${PROD_TYPE} production: ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}"
+git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET} -m "$cmessage"
 git push --follow-tags
 ```
 
-If you need to make corrections later, create a new tag by appending `_fixN`. Ex.:
-```
-git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}_fix1 -m "Added ZDC fix"
+If you need to make corrections later, get the latest tag and append `_fixN`:
+```bash
+git tag | tail -1
+tag_run3oo_calo_pro001_pcdb001_v001
+git tag -a tag_run3oo_calo_pro001_pcdb001_v001_fix1 -m "Added ZDC fix"
 git push --follow-tags
 ```
-
+<!-- 
 ## Problem Solving While Running
 To extract subsystem and run number from held jobs (adjust the `condor_q` command with more constraints to isolate a HoldReason or JobBatchName), use
 ```bash
@@ -306,13 +312,13 @@ for line in `condor_q -long -held |grep UserLog | sed 's/UserLog = //g' `; do
    subsystem=$(echo "$file" | awk -F'[_-]' '{print $4}')
    echo $subsystem $run
 done
-```
+``` -->
 
 ## Aborting and Cleaning Up a Production
 
 This section walks through stopping and completely removing a production. We use the three-step tracking production `ana548_FieldMapTest_v666` as a concrete example. All three steps here share a single triplet — this is specific to this production; in general, different steps may have different triplets and each needs its own cleanup pass.
 
-Physical deletion of output files is necessary to avoid collisions if the production is restarted and to prevent stale or incorrect data from persisting. The file catalog and physical files must always be in agreement — deleting one without the other leaves the system in an inconsistent state. The cleanup order matters: the file catalog is queried first to determine whether a file needs to be reproduced, followed by the production database. Once both are cleared and the physical files are gone, the autopilot entry can be uncommented in `active_productions.txt` for a clean restart.
+Physical deletion of output files is necessary to avoid collisions if the production is restarted and to prevent stale or incorrect data from persisting. The file catalog and physical files must always be in agreement — deleting one without the other leaves the system in an inconsistent state. The cleanup order matters: the file catalog is queried first to determine whether a file needs to be reproduced, followed by the production database.
 
 ### Step 0 — Stop the autopilot and kill running processes
 
@@ -409,6 +415,8 @@ delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype lik
 delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
 ```
 
+With physical files and both databases cleared, the system is in a clean state. To restart the production, simply uncomment the line in `active_productions.txt` — the cron job will pick it up within minutes.
+
 <!-- ############################################################################### -->
 <!-- ############################################################################### -->
 <!-- ############################################################################### -->
@@ -437,6 +445,24 @@ To compare committed changes, you need to use the following syntax instead:
 git diff branch1:path/to/file1 branch2:path/to/file2
 ````
 
+
+## Appendix: Job Exit Codes
+
+All job scripts report a final exit code via `common_runscript_finish.sh`, which records it in the production database. Codes are designed to identify the failure stage at a glance:
+
+| Code | Stage | Meaning |
+|------|-------|---------|
+| 0 | — | Success |
+| 2 | Setup | Bad arguments or configuration error |
+| 3 | Setup | Unsupported OS / environment setup failed |
+| 10 | Input | No input files found (DB query returned empty) |
+| 11 | Input | Remote file health check failed (missing or wrong size) |
+| 20 | Stage-in | Input file copy failed (dd retries exhausted or source missing) |
+| 21 | Stage-in | Input file md5 mismatch after copy |
+| 30 | Stage-out | Output file not found (macro produced no output) |
+| 31 | Stage-out | Output file copy failed (dd retries exhausted) |
+| 111 | Input | Streaming: wrong number of GL1 or detector list files |
+| other | Macro | Propagated directly from `root.exe` exit code |
 
 ## Appendix: Complete yaml files
 
@@ -703,21 +729,3 @@ sphnxprod01:
 
 ###############################################################################
 ```
-
-## Appendix: Job Exit Codes
-
-All job scripts report a final exit code via `common_runscript_finish.sh`, which records it in the production database. Codes are designed to identify the failure stage at a glance:
-
-| Code | Stage | Meaning |
-|------|-------|---------|
-| 0 | — | Success |
-| 2 | Setup | Bad arguments or configuration error |
-| 3 | Setup | Unsupported OS / environment setup failed |
-| 10 | Input | No input files found (DB query returned empty) |
-| 11 | Input | Remote file health check failed (missing or wrong size) |
-| 20 | Stage-in | Input file copy failed (dd retries exhausted or source missing) |
-| 21 | Stage-in | Input file md5 mismatch after copy |
-| 30 | Stage-out | Output file not found (macro produced no output) |
-| 31 | Stage-out | Output file copy failed (dd retries exhausted) |
-| 111 | Input | Streaming: wrong number of GL1 or detector list files |
-| other | Macro | Propagated directly from `root.exe` exit code |
