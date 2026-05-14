@@ -23,16 +23,16 @@ sphnxprod03:
   v668_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [79000 79999]
-    jobprio: 30
+    jobprio: 25
     submit: on
     dstspider: on
 
   v669_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [80000 81668]
-    jobprio: 30
-    submit: off
-    dstspider: off
+    jobprio: 25
+    submit: on
+    dstspider: on
 
 ################################################################################
 
@@ -60,15 +60,15 @@ sphnxprod04:
   v668_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [80000 81668]
-    jobprio: 30
+    jobprio: 25
     submit: on
     dstspider: on
 
   v669_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [79000 79999]
-    jobprio: 30
-    submit: off
-    dstspider: off
+    jobprio: 325
+    submit: on
+    dstspider: on
 
 ################################################################################
