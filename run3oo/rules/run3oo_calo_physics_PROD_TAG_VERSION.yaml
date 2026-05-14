@@ -1,5 +1,5 @@
 #______________________________________________________________________________
-PROD_TRIGGERED_EVENT_run3oo_vVERSION:
+PROD_TRIGGERED_EVENT_run3oo
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        PROD
@@ -20,7 +20,7 @@ PROD_TRIGGERED_EVENT_run3oo_vVERSION:
     payload:                [../triggered_code/*]
     request_memory:         2 GB, 3 GB, 5 GB
     request_xferslots:     '3'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
@@ -28,7 +28,7 @@ PROD_TRIGGERED_EVENT_run3oo_vVERSION:
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_CALOFITTING_run3oo_vVERSION:
+PROD_CALOFITTING_run3oo
   params:
     dsttype:      DST_CALOFITTING
     build:        PROD
@@ -49,7 +49,7 @@ PROD_CALOFITTING_run3oo_vVERSION:
     payload:                [../calo_code/*]
     request_memory:         2500MB, 4GB, 6GB
     request_cpus:          '1'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
@@ -57,7 +57,7 @@ PROD_CALOFITTING_run3oo_vVERSION:
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_JETSKIMMER_run3oo_vVERSION:
+PROD_JETSKIMMER_run3oo
   params:
     dsttype:     DST_JETCALO
     build:       PROD
@@ -69,7 +69,7 @@ PROD_JETSKIMMER_run3oo_vVERSION:
 
   input:
     table:       datasets
-    intriplet:   PROD_TAG_vVERSION
+    intriplet:   PROD_TAG
     indsttype:   DST_CALOFITTING
 
   job:
@@ -79,7 +79,7 @@ PROD_JETSKIMMER_run3oo_vVERSION:
     payload:                [../calo_code/*]
     request_memory:         2500MB, 4GB, 6GB
     request_cpus:          '1'
-    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"

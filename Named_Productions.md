@@ -16,6 +16,11 @@
 
 ## Getting started
 
+The standard location for productions is `/sphenix/u/sphnxpro/Production2026`. 
+The `prodmacros` subdirectory should always be the up to date `main` branch of [sPHENIX-Collaboration/prodmacros](https://github.com/sPHENIX-Collaboration/prodmacros).
+The `sphenixprod` subdirectory should always be the up to date `main` branch of [BNLNPPS/sphenixprod](https://github.com/BNLNPPS/sphenixprod).
+Please perform any development work elsewhere, then bring it here via pull request, and `git pull`.
+
 First, define your production type and tag parameters in your terminal.
 **(Adjust "calo" or "tracking", the dataset, and the tags as needed):**
 
@@ -36,7 +41,7 @@ run3oo_calo_physics  pro001_pcdb001_v001
 Now, clone the repository and set up your branches. **You can copy/paste this exactly as is:**
 
 ```bash
-cd Production2026
+cd ~/Production2026
 git clone git@github.com:sPHENIX-Collaboration/prodmacros.git ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 cd ${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 ```
@@ -131,12 +136,12 @@ git mv ${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml ${SET_TYPE_MODE}_${TRIPLET}.yaml
 As usual, you can delete (`git rm`) the unused rule.
 
 It is quite easy to guess what changes are needed file, namely PROD, TAG and VERSION, plus maybe a few naming and control details.
-Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo_v001`.
+Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo`.
 
 The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Note that **`build` requires a period** (e.g. `ana.548`, `pro.001`) — the exception is `new`, which has no period. Calo example:
 ```yaml
 #__________________________________________________________________________________
-pro001_TRIGGERED_EVENT_run3oo_v001:
+pro001_TRIGGERED_EVENT_run3oo:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        pro.001
@@ -149,7 +154,7 @@ pro001_TRIGGERED_EVENT_run3oo_v001:
 
 [...]
 #__________________________________________________________________________________
-pro001_CALOFITTING_run3oo_v001:
+pro001_CALOFITTING_run3oo:
   params:
     dsttype:      DST_CALOFITTING
     build:        pro.001
@@ -176,9 +181,9 @@ It is a good idea to look over the other fields as well. The full contents for b
 You can now submit jobs manually using (adjust the rule name and config path):
 ```bash
 # Calo example:
-create_submission.py --rule pro001_TRIGGERED_EVENT_run3oo_v001 --config rules/run3oo_calo_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
+create_submission.py --rule pro001_TRIGGERED_EVENT_run3oo --config rules/run3oo_calo_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
 # Tracking example:
-create_submission.py --rule pro001_STREAMING_EVENT_run3oo_v001 --config rules/run3oo_tracking_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
+create_submission.py --rule pro001_STREAMING_EVENT_run3oo --config rules/run3oo_tracking_physics_pro001_pcdb001_v001.yaml --runs 82503 --andgo
 ```
 And you could also periodically run `dstspider.py` and `histspider.py` with the same arguments. However, especially for spiders, we want to put this job on autopilot.
 
@@ -204,14 +209,14 @@ Most important here is to change `configbase`. Note that the production submissi
 Now add an entry for each of the rules we want to run. **Calo** example:
 ```yaml
   # Event combining
-  pro001_TRIGGERED_EVENT_run3oo_v001:
+  pro001_TRIGGERED_EVENT_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
 [...]
 
   # Waveform fitting
-  pro001_CALOFITTING_run3oo_v001:
+  pro001_CALOFITTING_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
@@ -221,28 +226,28 @@ Now add an entry for each of the rules we want to run. **Calo** example:
 **Tracking** example:
 ```yaml
   # Event combining
-  pro001_STREAMING_EVENT_run3oo_v001:
+  pro001_STREAMING_EVENT_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
 [...]
 
   # Clustering
-  pro001_TRKR_CLUSTER_run3oo_v001:
+  pro001_TRKR_CLUSTER_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
 [...]
 
   # Seeding
-  pro001_TRKR_SEED_run3oo_v001:
+  pro001_TRKR_SEED_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
 [...]
 
   # Track Fitting
-  pro001_TRKR_TRACKS_run3oo_v001:
+  pro001_TRKR_TRACKS_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runs: [82300 82400]
     submit: on
@@ -470,7 +475,7 @@ All job scripts report a final exit code via `common_runscript_finish.sh`, which
 
 ```yaml
 #______________________________________________________________________________
-pro001_TRIGGERED_EVENT_run3oo_v001:
+pro001_TRIGGERED_EVENT_run3oo:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        pro.001
@@ -497,7 +502,7 @@ pro001_TRIGGERED_EVENT_run3oo_v001:
     priority:              '90'
 
 #______________________________________________________________________________
-pro001_CALOFITTING_run3oo_v001:
+pro001_CALOFITTING_run3oo:
   params:
     dsttype:      DST_CALOFITTING
     build:        pro.001
@@ -538,7 +543,7 @@ sphnxprod02:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
 
   # Event combining
-  pro001_TRIGGERED_EVENT_run3oo_v001:
+  pro001_TRIGGERED_EVENT_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/runlist_run3oo_calo_pro001
     # runs: [82374 82703]
@@ -549,7 +554,7 @@ sphnxprod02:
     finishmon: on
 
   # Waveform fitting
-  pro001_CALOFITTING_run3oo_v001:
+  pro001_CALOFITTING_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/runlist_run3oo_calo_pro001
     jobprio: 110
@@ -564,7 +569,7 @@ sphnxprod02:
 
 ```yaml
 #______________________________________________________________________________________________________________________
-pro001_STREAMING_EVENT_run3oo_v001:
+pro001_STREAMING_EVENT_run3oo:
   params:
     dsttype:    DST_STREAMING_EVENT
     period:     run3oo
@@ -596,7 +601,7 @@ pro001_STREAMING_EVENT_run3oo_v001:
       condor:            "/tmp/data02/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_CLUSTER_run3oo_v001:
+pro001_TRKR_CLUSTER_run3oo:
   params:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3oo
@@ -622,7 +627,7 @@ pro001_TRKR_CLUSTER_run3oo_v001:
     priority:              '60'
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_SEED_run3oo_v001:
+pro001_TRKR_SEED_run3oo:
   params:
     dsttype:     DST_TRKR_SEED
     period:      run3oo
@@ -648,7 +653,7 @@ pro001_TRKR_SEED_run3oo_v001:
     priority:              '30'
 
 #______________________________________________________________________________________________________________________
-pro001_TRKR_TRACKS_run3oo_v001:
+pro001_TRKR_TRACKS_run3oo:
   params:
     dsttype:     DST_TRKR_TRACKS
     period:      run3oo
@@ -688,7 +693,7 @@ sphnxprod01:
     configbase: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/rules
 
   # STREAMING physics
-  pro001_STREAMING_EVENT_run3oo_v001:
+  pro001_STREAMING_EVENT_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
     #runs: [82372 82703]
@@ -698,7 +703,7 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_CLUSTER physics
-  pro001_TRKR_CLUSTER_run3oo_v001:
+  pro001_TRKR_CLUSTER_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
     #runs: [82372 82703]
@@ -708,7 +713,7 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_SEED physics
-  pro001_TRKR_SEED_run3oo_v001:
+  pro001_TRKR_SEED_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
     #runs: [82372 82703]
@@ -718,7 +723,7 @@ sphnxprod01:
     finishmon: on
 
   # TRKR_TRACKS physics
-  pro001_TRKR_TRACKS_run3oo_v001:
+  pro001_TRKR_TRACKS_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
     #runs: [82372 82703]

@@ -7,7 +7,7 @@ sphnxprod03:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
 
   # Event combining
-  PROD_STREAMING_EVENT_run3pp_vVERSION:
+  PROD_STREAMING_EVENT_run3pp
     config: run3pp_tracking_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/runlist
     jobprio: 90
@@ -15,7 +15,7 @@ sphnxprod03:
     dstspider: on
 
   # Clustering
-  PROD_TRKR_CLUSTER_run3pp_vVERSION:
+  PROD_TRKR_CLUSTER_run3pp
     config: run3pp_tracking_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/runlist
     jobprio: 60
@@ -23,7 +23,7 @@ sphnxprod03:
     dstspider: on
 
   # Seeding
-  PROD_TRKR_SEED_run3pp_vVERSION:
+  PROD_TRKR_SEED_run3pp
     config: run3pp_tracking_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/runlist
     jobprio: 30
