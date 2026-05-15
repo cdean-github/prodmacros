@@ -10,15 +10,15 @@ sphnxprod03:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [79000 79999]
     jobprio: 30
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
 
   v667_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [80000 81668]
     jobprio: 30
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
 
   v668_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
@@ -31,6 +31,20 @@ sphnxprod03:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [80000 81668]
     jobprio: 25
+    submit: on
+    dstspider: on
+
+  v670_TRKR_SEED_run3pp:
+    config: v66x_ppseed_physics_ana545.yaml
+    runs: [79000 79999]
+    jobprio: 24
+    submit: on
+    dstspider: on
+
+  v671_TRKR_SEED_run3pp:
+    config: v66x_ppseed_physics_ana545.yaml
+    runs: [80000 81668]
+    jobprio: 24
     submit: on
     dstspider: on
 
@@ -40,22 +54,22 @@ sphnxprod03:
 sphnxprod04:
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/testing/submission/{rule}
-    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
     configbase: /sphenix/u/sphnxpro/Production2026/prodmacros/testing/rules/
 
   v666_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [80000 81668]
     jobprio: 30
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
 
   v667_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [79000 79999]
     jobprio: 30
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
 
   v668_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
@@ -67,7 +81,21 @@ sphnxprod04:
   v669_TRKR_SEED_run3pp:
     config: v66x_ppseed_physics_ana545.yaml
     runs: [79000 79999]
-    jobprio: 325
+    jobprio: 25
+    submit: on
+    dstspider: on
+
+  v670_TRKR_SEED_run3pp:
+    config: v66x_ppseed_physics_ana545.yaml
+    runs: [80000 81668]
+    jobprio: 24
+    submit: on
+    dstspider: on
+
+  v671_TRKR_SEED_run3pp:
+    config: v66x_ppseed_physics_ana545.yaml
+    runs: [79000 79999]
+    jobprio: 24
     submit: on
     dstspider: on
 
