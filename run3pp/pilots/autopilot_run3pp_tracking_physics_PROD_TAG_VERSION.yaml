@@ -2,7 +2,7 @@
 ### Standard full production
 sphnxprod03:
   defaultlocations:
-    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
     configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/rules
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
 

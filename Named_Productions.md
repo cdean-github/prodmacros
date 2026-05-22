@@ -415,9 +415,9 @@ Also clean up the production database:
 psql -d Production -h sphnxproddbmaster.sdcc.bnl.gov -U argouser
 ```
 ```sql
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_STREAMING_EVENT_%';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_CLUSTER_%';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT_%';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype='%DST_TRKR_SEED';
 ```
 
 With physical files and both databases cleared, the system is in a clean state. To restart the production, simply uncomment the line in `active_productions.txt` — the cron job will pick it up within minutes.
