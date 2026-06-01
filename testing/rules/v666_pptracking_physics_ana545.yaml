@@ -11,7 +11,7 @@ v666_TRKR_CLUSTER_run3pp:
     version:     666
 
   input:
-    intriplet:   ana545_nocdbtag_v666
+    intriplet:   ana545_newcdbtag_v666
 
   job:
     script:                 run_rolloverjob0.sh

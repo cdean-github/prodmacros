@@ -52,18 +52,18 @@ Then make a copy of the appropriate directory, again slightly differently named.
 git checkout -b branch_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}
 git branch --show-current
 branch_run3oo_calo_pro001_pcdb001_v001
-cp -r ${PROD_DATASET} thisProd_${PROD_DATASET}
-git add thisProd_${PROD_DATASET}
+cp -r ${PROD_DATASET} thisProd
+git add thisProd
 ```
 Optional: The autopilot control and the general instructions shouldn't be edited here. No other directories are needed at this point either, so we can delete all of it.
 Production specific comments should go into a dedicated README file.
 At this point only the directory `dir_...` and maybe the README should be left.
 
 ```bash
-git rm -r Named*_Productions*.md active_productions.txt run* bak_* testing
+git rm -rf Named*_Productions*.md active_productions.txt run* bak testing
 # touch README_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}.md
 ls -1
-thisProd_run3oo
+thisProd
 ```
 
 
@@ -74,7 +74,7 @@ A production needs:
 These three live in respective subdirectories.
 
 ```bash
-cd thisProd_${PROD_DATASET}
+cd thisProd
 ls -1
 pilots
 rules
@@ -133,7 +133,7 @@ Start from the appropriate template:
 cd rules
 git mv ${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml ${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
-As usual, you can delete (`git rm`) the unused rule.
+As usual, you can delete (`git rm -f`) the unused rule.
 
 It is quite easy to guess what changes are needed file, namely PROD, TAG and VERSION, plus maybe a few naming and control details.
 Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo`.
@@ -191,7 +191,7 @@ And you could also periodically run `dstspider.py` and `histspider.py` with the 
 Start from the appropriate template.
 ```bash
 cd pilots
-git mv autopilot_run3oo_calo_physics_PROD_TAG_VERSION.yaml autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml
+it mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MODE}_${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
 As usual, you can delete (`git rm`) the unused rule.
 
@@ -201,7 +201,7 @@ The file needs a top node for any submission host you'd want to run this product
 sphnxprod01:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/rules
     submitdir:  /sphenix/data/data03/sphnxpro/production/run3oo/submission/{rule}
 ```
 Most important here is to change `configbase`. Note that the production submission installation at `prodbase` can also be individualized. `submitdir` is a location for helper caches, so make sure it's not in danger of being full.
@@ -256,7 +256,7 @@ Now add an entry for each of the rules we want to run. **Calo** example:
 
 For production runs, replace `runs` with a `runlist` pointing to a plain-text file of run numbers (one per line):
 ```yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/runlist_run3oo_calo_pro001
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/runlist_run3oo_calo_pro001
 ```
 
 The full files in the [Appendix](#appendix-complete-yaml-files) show additional parameters to control the spider(s), monitoring, priority, etc. Also shown is how to run submission and/or spidering of the same job type from multiple submit hosts.
@@ -275,7 +275,7 @@ To add this production to the list, edit `/sphenix/u/sphnxpro/Production2026/act
 cat /sphenix/u/sphnxpro/Production2026/active_productions.txt
 # This file lists the active production steering files for the master cron job.
 # One full path per line. Lines starting with # are ignored.
-/sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/pilots/autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/pilots/autopilot_run3oo_calo_physics_pro001_pcdb001_v001.yaml
 ...
 ```
 
@@ -417,7 +417,7 @@ psql -d Production -h sphnxproddbmaster.sdcc.bnl.gov -U argouser
 ```sql
 delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT_%';
 delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype='%DST_TRKR_SEED';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED';
 ```
 
 With physical files and both databases cleared, the system is in a clean state. To restart the production, simply uncomment the line in `active_productions.txt` — the cron job will pick it up within minutes.
@@ -431,10 +431,10 @@ With physical files and both databases cleared, the system is in a clean state. 
 To compare a current file, use `git diff branch-name -- filename`. For example,
 ```diff
 git diff main:`${PROD_DATASET}/`triggered_code/Fun4All_Prdf_Combiner.C ./triggered_code/Fun4All_Prdf_Combiner.C
-diff --git a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C b/thisProd_${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C
+diff --git a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C b/thisProd/triggered_code/Fun4All_Prdf_Combiner.C
 index ec93f7e..1a0f63e 100644
 --- a/${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C
-+++ b/thisProd_${PROD_DATASET}/triggered_code/Fun4All_Prdf_Combiner.C
++++ b/thisProd/triggered_code/Fun4All_Prdf_Combiner.C
 @@ -26,6 +26,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
                             const std::string &outbase = "delme",
                             const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test")
@@ -498,7 +498,7 @@ pro001_TRIGGERED_EVENT_run3oo:
     payload:                [../triggered_code/*]
     request_memory:         2 GB, 3 GB, 5 GB
     request_xferslots:     '3'    
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
 
 #______________________________________________________________________________
@@ -524,7 +524,7 @@ pro001_CALOFITTING_run3oo:
     payload:                [../calo_code/*]
     request_memory:         2500MB, 4GB, 6GB
     request_cpus:          '1'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
 
 ###############################################################################
@@ -539,28 +539,26 @@ pro001_CALOFITTING_run3oo:
 sphnxprod02:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/rules
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
 
   # Event combining
   pro001_TRIGGERED_EVENT_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/runlist_run3oo_calo_pro001
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/runlist_run3oo_calo_pro001
     # runs: [82374 82703]
     #jobprio: 90
     jobprio: 110
     submit: on
     dstspider: on
-    finishmon: on
 
   # Waveform fitting
   pro001_CALOFITTING_run3oo:
     config: run3oo_calo_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd_run3oo/runlist_run3oo_calo_pro001
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_pro001_pcdb001_v001/thisProd/runlist_run3oo_calo_pro001
     jobprio: 110
     submit: on
     dstspider: on
-    finishmon: on
 
 ###############################################################################
 ```
@@ -593,7 +591,7 @@ pro001_STREAMING_EVENT_run3oo:
     payload:                [../streaming_code/*]
     request_memory:         3072 MB, 5072 MB, 7072 MB
     request_xferslots:     '3'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
     filesystem:
       logdir:   "/sphenix/data/data02/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
@@ -623,7 +621,7 @@ pro001_TRKR_CLUSTER_run3oo:
     payload:                [../tracking_code/*]
     request_memory:         8192 MB, 12092 MB, 16092 MB
     request_cpus:          '1'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
 
 #______________________________________________________________________________________________________________________
@@ -649,7 +647,7 @@ pro001_TRKR_SEED_run3oo:
     payload:                [../tracking_code/*]
     request_memory:         4096 MB, 6096 MB, 8096 MB
     request_cpus:          '2'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '30'
 
 #______________________________________________________________________________________________________________________
@@ -675,7 +673,7 @@ pro001_TRKR_TRACKS_run3oo:
     payload:                [../tracking_code/*]
     request_memory:         4096 MB, 6096 MB, 8096 MB
     request_cpus:          '2'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '30'
 
 ###############################################################################
@@ -690,47 +688,43 @@ sphnxprod01:
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd/rules
 
   # STREAMING physics
   pro001_STREAMING_EVENT_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd/runlist
     #runs: [82372 82703]
     jobprio: 90
     submit: on
     dstspider: on
-    finishmon: on
 
   # TRKR_CLUSTER physics
   pro001_TRKR_CLUSTER_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd/runlist
     #runs: [82372 82703]
     jobprio: 60
     submit: on
     dstspider: on
-    finishmon: on
 
   # TRKR_SEED physics
   pro001_TRKR_SEED_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd/runlist
     #runs: [82372 82703]
     jobprio: 30
     submit: on
     dstspider: on
-    finishmon: on
 
   # TRKR_TRACKS physics
   pro001_TRKR_TRACKS_run3oo:
     config: run3oo_tracking_physics_pro001_pcdb001_v001.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd_run3oo/runlist
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_tracking_pro001_pcdb001_v001/thisProd/runlist
     #runs: [82372 82703]
     jobprio: 10
     submit: on
     dstspider: on
-    finishmon: on
 
 ###############################################################################
 ```

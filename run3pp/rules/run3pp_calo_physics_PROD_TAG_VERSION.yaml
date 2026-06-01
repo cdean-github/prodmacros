@@ -1,5 +1,5 @@
 #______________________________________________________________________________
-PROD_TRIGGERED_EVENT_run3pp
+PROD_TRIGGERED_EVENT_run3pp:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     build:        PROD
@@ -28,7 +28,7 @@ PROD_TRIGGERED_EVENT_run3pp
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_CALOFITTING_run3pp
+PROD_CALOFITTING_run3pp:
   params:
     dsttype:      DST_CALOFITTING
     build:        PROD
@@ -57,7 +57,7 @@ PROD_CALOFITTING_run3pp
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-PROD_JETSKIMMER_run3pp
+PROD_JETSKIMMER_run3pp:
   params:
     dsttype:     DST_JETCALO
     build:       PROD
