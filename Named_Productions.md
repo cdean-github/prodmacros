@@ -28,11 +28,12 @@ First, define your production type and tag parameters in your terminal.
 export PROD_DATASET="run3oo"
 export PROD_TYPE="calo"          # or "tracking"
 export PROD_PHYSICSMODE="physics" # or "cosmics", etc.
-export PROD_BUILD="pro001"
+export PROD_BUILD="pro.001"       # build string used in YAML
+export PROD_BUILD_TEXT="${PROD_BUILD//./}"  # build string with periods removed for names
 export PROD_DBTAG="pcdb001"
 export PROD_VERSION="v001"
 export SET_TYPE_MODE="${PROD_DATASET}_${PROD_TYPE}_${PROD_PHYSICSMODE}"
-export TRIPLET="${PROD_BUILD}_${PROD_DBTAG}_${PROD_VERSION}"
+export TRIPLET="${PROD_BUILD_TEXT}_${PROD_DBTAG}_${PROD_VERSION}"
 ## Double-check:
 echo "${SET_TYPE_MODE}  ${TRIPLET}"
 run3oo_calo_physics  pro001_pcdb001_v001
@@ -62,8 +63,9 @@ At this point only the directory `dir_...` and maybe the README should be left.
 ```bash
 git rm -rf Named*_Productions*.md active_productions.txt run* bak testing
 # touch README_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}.md
-ls -1
+ls -1 
 thisProd
+cd thisProd
 ```
 
 
