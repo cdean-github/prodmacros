@@ -36,7 +36,7 @@ PROD_TRKR_CLUSTER_run3pp:
     version:     VERSION
 
   input:
-    intriplet:   PROD_TAG
+    intriplet:   PROD_TAG_VERSION
 
   job:
     script:                 run_rolloverjob0.sh
@@ -60,7 +60,7 @@ PROD_TRKR_SEED_run3pp:
     version:     VERSION
 
   input:
-    intriplet:   PROD_TAG
+    intriplet:   PROD_TAG_VERSION
 
   job:
     script:                 run_jobA.sh

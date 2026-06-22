@@ -40,7 +40,7 @@ PROD_CALOFITTING_run3pp:
 
   input:
     table:        datasets
-    intriplet:    PROD_TAG_vVERSION  # This is the output triplet of the previous rule
+    intriplet:    PROD_TAG_VERSION  # This is the output triplet of the previous rule
 
   job:
     script:                 run_fitting.sh
@@ -69,7 +69,7 @@ PROD_JETSKIMMER_run3pp:
 
   input:
     table:       datasets
-    intriplet:   PROD_TAG
+    intriplet:   PROD_TAG_VERSION
     indsttype:   DST_CALOFITTING
 
   job:
