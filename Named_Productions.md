@@ -140,7 +140,7 @@ As usual, you can delete (`git rm -f`) the unused rule.
 It is quite easy to guess what changes are needed file, namely PROD, TAG and VERSION, plus maybe a few naming and control details.
 Each rule needs a name; by convention adorn the `dsttype` with a build prefix and dataset postfix, e.g. `pro001_TRIGGERED_EVENT_run3oo`.
 
-The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Note that **`build` requires a period** (e.g. `ana.548`, `pro.001`) — the exception is `new`, which has no period. Calo example:
+For a set of commands to make these changes, see below the example. The critical fields to adapt are named `build`, `dbtag`, and `version`, which then need to properly trickle down into the next step's `intriplet`. Note that **`build` requires a period** (e.g. `ana.548`, `pro.001`) — the exception is `new`, which has no period. Calo example:
 ```yaml
 #__________________________________________________________________________________
 pro001_TRIGGERED_EVENT_run3oo:
@@ -174,6 +174,14 @@ pro001_CALOFITTING_run3oo:
 ```
 Note that `build`, `tag`, and `version` of the two steps don't need to be the same, the connection is made via the `intriplet`. However, if they do differ, please name the base directories, branch, git tag, etc. wisely.
 
+Quick way to automatically apply substitutions for PROD, TAG, VERSION, and intriplet:
+```bash
+sed -i "s/build:.*PROD/build:        ${PROD_BUILD}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/dbtag:.*TAG/dbtag:        ${PROD_DBTAG}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/version:.*VERSION/version:      ${PROD_VERSION#v}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/intriplet:.*PROD_TAG_VERSION/intriplet:   ${TRIPLET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+```
+
 
 It is a good idea to look over the other fields as well. The full contents for both calo and tracking are in the [Appendix](#appendix-complete-yaml-files). Of particular interest are `dataset` and `physicsmode` for things like cosmics, and `request_memory`, which allows you to specify which RAM image sizes to try successively before condor gives up. Example:
 ```yaml
@@ -193,9 +201,23 @@ And you could also periodically run `dstspider.py` and `histspider.py` with the 
 Start from the appropriate template.
 ```bash
 cd pilots
-it mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MODE}_${SET_TYPE_MODE}_${TRIPLET}.yaml
+git mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
-As usual, you can delete (`git rm`) the unused rule.
+Automatically apply substitutions for rule names, paths, and config file names:
+```bash
+sed -i "s|configbase:.*BRANCH|configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/thisProd/rules|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_STREAMING_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_STREAMING_EVENT_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_CLUSTER_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_CLUSTER_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_SEED_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_SEED_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_TRACKS_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_TRACKS_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRIGGERED_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRIGGERED_EVENT_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_CALOFITTING_${PROD_DATASET}/${PROD_BUILD_TEXT}_CALOFITTING_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_JETSKIMMER_${PROD_DATASET}/${PROD_BUILD_TEXT}_JETSKIMMER_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s|config:.*PROD_TAG_VERSION.yaml|config: ${SET_TYPE_MODE}_${TRIPLET}.yaml|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s|runlist:.*BRANCH/thisProd/runlist|runlist: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/thisProd/runlist|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+git add autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+```
+As usual, you can delete (`git rm`) the unused pilot yaml.
 
 ### Adapt or create rules
 The file needs a top node for any submission host you'd want to run this production on. It starts with paths:
