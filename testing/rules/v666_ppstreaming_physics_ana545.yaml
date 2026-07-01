@@ -6,12 +6,10 @@ v666_STREAMING_EVENT_run3pp:
     physicsmode: physics
     dataset:    run3pp
     build:      ana.545
-    dbtag:      pcdb001
+    dbtag:      newcdbtag
     version:    666
 
   input:
-    db:          rawr
-    table:       datasets
     min_run_time:   300
     min_run_events: 100000
     combine_seg0_only: false

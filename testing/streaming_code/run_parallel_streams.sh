@@ -12,6 +12,7 @@ echo "--- Collecting input files"
 make_filelists="./create_filelist_run_daqhost.py $run $daqhost $inputs"
 echo "$make_filelists"
 eval "$make_filelists"
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
 # Should be exactly one gl1 file and one ebdc, mvtx, or intt file
 # trying to be flexible here, but we have to assume daqhost will always be lowercase and in this family
@@ -45,13 +46,6 @@ fi
 [[ $1 == *ebdc39* ]] && ebdcfile="" && tpotfile=$1
 shopt -u nullglob
 
-ls -la *.list
-echo end of ls -la '*.list'
-for l in *list; do
-    echo cat $l
-    cat $l
-done
-
 echo "--- Executing macro"
 
 root_line="Fun4All_SingleStream_Combiner.C(${nevents},${run},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\");"
@@ -63,15 +57,14 @@ echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 shopt -s nullglob
 for hfile in HIST_*.root; do
     echo ./stageout ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
+    . ./stageout.sh ${hfile} ${histdir}
 done
 for cfile in CALIB_*.root; do
     echo ./stageout ${cfile} to ${histdir}
-    ./stageout.sh ${cfile} ${histdir}
+    . ./stageout.sh ${cfile} ${histdir}
 done
 shopt -u nullglob
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-exit ${status_f4a:-1}

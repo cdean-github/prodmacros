@@ -3,6 +3,8 @@
  * example showing how to unpack the raw hits into the offline tracker hit
  * format. No other reconstruction or analysis is performed
  */
+// GlobalVariables.C has to be first, leave empty line after it so clang-format
+// does not reshuffle it
 #include <GlobalVariables.C>
 
 #include <QA.C>
@@ -15,8 +17,8 @@
 
 #include <mvtxrawhitqa/MvtxRawHitQA.h>
 
-#include <tpcqa/TpcRawHitQA.h>
 #include <tpcqa/TpcLaserQA.h>
+#include <tpcqa/TpcRawHitQA.h>
 
 #include <trackingqa/InttClusterQA.h>
 #include <trackingqa/MicromegasClusterQA.h>
@@ -26,13 +28,13 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
-#include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/recoConsts.h>
 
@@ -51,66 +53,64 @@ R__LOAD_LIBRARY(libtrackingqa.so)
 
 void Fun4All_RolloverJob0(
     const int nEvents = 2,
-    const int  /*runnumber*/ = 41626,
-    const std::string& outdir = ".",
-    const std::string& outfilename = "out.root",
+    const int /*runnumber*/ = 41626,
+    const std::string &outdir = ".",
+    const std::string &outfilename = "out.root",
     const int neventsper = 100,
     const int startseg = 0,
-    const std::string& dbtag = "2024p001",
-    const std::string& filelist = "filelist.list",
-    const std::string& histdir = "")
+    const std::string &dbtag = "2024p001",
+    const std::string &filelist = "filelist.list",
+    const std::string &histdir = "")
 {
-
   gSystem->Load("libg4dst.so");
-  //char filename[500];
-  //sprintf(filename, "%s%08d-0000.root", inputRawHitFile.c_str(), runnumber);
- 
+  // char filename[500];
+  // sprintf(filename, "%s%08d-0000.root", inputRawHitFile.c_str(), runnumber);
+
   Enable::MVTX_APPLYMISALIGNMENT = true;
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
-  
+
   TRACKING::tpc_zero_supp = true;
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
-  
+
   auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
-  se->VerbosityDownscale(100); // only print every 1000th event
+  se->VerbosityDownscale(100);  // only print every 1000th event
   auto *rc = recoConsts::instance();
-  
+
   std::ifstream ifs(filelist);
-  std::string filepath; 
-  
+  std::string filepath;
+
   int i = 0;
   bool process_endpoints = false;
-  while(std::getline(ifs,filepath))
+  while (std::getline(ifs, filepath))
+  {
+    std::cout << "Adding DST with filepath: " << filepath << std::endl;
+    if (i == 0)
     {
-      std::cout << "Adding DST with filepath: " << filepath << std::endl; 
-     if(i==0)
-	{
-	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
-	   int runNumber = runseg.first;
-	   //int segment = runseg.second;
-	   rc->set_IntFlag("RUNNUMBER", runNumber);
-	   rc->set_uint64Flag("TIMESTAMP", runNumber);
-        
-	}
-       if(filepath.find("ebdc") != std::string::npos)
-	{
-	  if(filepath.find("_0_") != std::string::npos ||
-	     filepath.find("_1_") != std::string::npos)
-	    {
-	      process_endpoints = true;
-	    }
-	}
-      std::string inputname = "InputManager" + std::to_string(i);
-      auto *hitsin = new Fun4AllDstInputManager(inputname);
-      hitsin->fileopen(filepath);
-      se->registerInputManager(hitsin);
-      i++;
+      std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
+      int runNumber = runseg.first;
+      // int segment = runseg.second;
+      rc->set_IntFlag("RUNNUMBER", runNumber);
+      rc->set_uint64Flag("TIMESTAMP", runNumber);
     }
+    if (filepath.find("ebdc") != std::string::npos)
+    {
+      if (filepath.find("_0_") != std::string::npos ||
+          filepath.find("_1_") != std::string::npos)
+      {
+        process_endpoints = true;
+      }
+    }
+    std::string inputname = "InputManager" + std::to_string(i);
+    auto *hitsin = new Fun4AllDstInputManager(inputname);
+    hitsin->fileopen(filepath);
+    se->registerInputManager(hitsin);
+    i++;
+  }
 
   CDBInterface::instance()->Verbosity(1);
 
-  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -119,37 +119,36 @@ void Fun4All_RolloverJob0(
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
-  
 
   TrackingInit();
 
-  for(int felix=0; felix < 6; felix++)
-    {
-      Mvtx_HitUnpacking(std::to_string(felix));
-    }
-  for(int server = 0; server < 8; server++)
-    {
-      Intt_HitUnpacking(std::to_string(server));
-    }
+  for (int felix = 0; felix < 6; felix++)
+  {
+    Mvtx_HitUnpacking(std::to_string(felix));
+  }
+  for (int server = 0; server < 8; server++)
+  {
+    Intt_HitUnpacking(std::to_string(server));
+  }
 
   std::cout << "Process endpoints is " << process_endpoints << std::endl;
   std::string ebdcname;
-  for(int ebdc = 0; ebdc < 24; ebdc++)
+  for (int ebdc = 0; ebdc < 24; ebdc++)
+  {
+    if (!process_endpoints)
     {
-      if(!process_endpoints)
-	{
-          ebdcname = std::format("{:02}",ebdc);
-	  Tpc_HitUnpacking(ebdcname);
-	}
-      else if(process_endpoints)
-	{
-	  for(int endpoint = 0; endpoint <2; endpoint++)
-	    {
-	      ebdcname = std::format("{:02}_{}",ebdc,endpoint);
-	      Tpc_HitUnpacking(ebdcname);
-	    }
-	}
+      ebdcname = std::format("{:02}", ebdc);
+      Tpc_HitUnpacking(ebdcname);
     }
+    else if (process_endpoints)
+    {
+      for (int endpoint = 0; endpoint < 2; endpoint++)
+      {
+        ebdcname = std::format("{:02}_{}", ebdc, endpoint);
+        Tpc_HitUnpacking(ebdcname);
+      }
+    }
+  }
 
   Micromegas_HitUnpacking();
 
@@ -177,26 +176,25 @@ void Fun4All_RolloverJob0(
   se->registerSubsystem(new TpcClusterQA);
   se->registerSubsystem(new MicromegasClusterQA);
 
-
   auto *mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
-  
+
   se->registerSubsystem(new InttQa);
-  
+
   auto *tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
 
   auto *LaserQA = new TpcLaserQA;
   se->registerSubsystem(LaserQA);
-  const std::string& dstoutname = outfilename;
-  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", dstoutname);
+
+  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("LaserEventInfo");
   out->AddNode("GL1RAWHIT");
-  if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
+  if (G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
@@ -208,8 +206,9 @@ void Fun4All_RolloverJob0(
   out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
   out->StripRunNode("GEOMETRY_IO");
  
-  out->SetEventNumberRollover(neventsper); // event number for rollover
-  out->StartSegment(startseg); // starting segment number
+  out->SetEventNumberRollover(neventsper);  // event number for rollover
+  out->StartSegment(startseg);              // starting segment number
+
   out->UseFileRule();
   out->SetClosingScript("./stageout.sh");
   out->SetClosingScriptArgs(outdir);
@@ -219,13 +218,15 @@ void Fun4All_RolloverJob0(
   hm->CopyRolloverSetting(out);
   std::string histoout = "HIST_" + outfilename;
   hm->setOutfileName(histoout);
-  if ( !histdir.empty() )
+  if (!histdir.empty())
   {
     hm->SetClosingScriptArgs(histdir);
-  } else {
+  }
+  else
+  {
     hm->SetClosingScriptArgs(outdir);
   }
-  
+
   se->run(nEvents);
   se->End();
 
