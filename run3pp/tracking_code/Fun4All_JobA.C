@@ -131,7 +131,11 @@ void Fun4All_JobA(
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("GL1RAWHIT");
-
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("TPCGEOMCONTAINER");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
   se->registerOutputManager(out);
 
   auto *converter = new TrackSeedTrackMapConverter("SiliconSeedConverter");
