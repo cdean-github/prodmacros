@@ -35,7 +35,7 @@
 #include <fun4all/Fun4AllServer.h>
 
 #include <phool/recoConsts.h>
-
+#include <fstream>
 #include <format>
 
 R__LOAD_LIBRARY(libfun4all.so)
@@ -201,6 +201,11 @@ void Fun4All_RolloverJob0(
     out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
   }
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("TPCGEOMCONTAINER");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
   out->SetEventNumberRollover(neventsper); // event number for rollover
   out->StartSegment(startseg); // starting segment number
   out->UseFileRule();
