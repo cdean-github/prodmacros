@@ -35,7 +35,7 @@
 #include <fun4all/Fun4AllServer.h>
 
 #include <phool/recoConsts.h>
-
+#include <fstream>
 #include <format>
 
 R__LOAD_LIBRARY(libfun4all.so)

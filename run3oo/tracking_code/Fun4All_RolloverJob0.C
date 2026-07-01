@@ -39,7 +39,7 @@
 #include <phool/recoConsts.h>
 
 #include <format>
-
+#include <fstream>
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
