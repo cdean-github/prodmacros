@@ -28,8 +28,9 @@ eval "$make_filelists"
 
 outfile=${logbase}.root
 outzdc=${logbase/DST_CALOFITTING/DST_ZDC_RAW}.root
+outsepd=${logbase/DST_CALOFITTING/DST_SEPD_RAW}.root
 outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
-root_line="Fun4All_Year2_Fitting.C(${nevents},\"infile.list\",\"${outfile}\",\"${outzdc}\",\"${outhist}\",\"${dbtag}\")"
+root_line="Fun4All_Year2_Fitting.C(${nevents},\"infile.list\",\"${outfile}\",\"${outzdc}\",\"${outsepd}\",\"${outhist}\",\"${dbtag}\")"
 full_command="root.exe -q -b '${root_line}'"
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
