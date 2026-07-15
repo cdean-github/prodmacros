@@ -7,7 +7,7 @@ sphnxprod03:
     submitdir:  /sphenix/data/data03/sphnxpro/production/run3oo/submission/{rule}
 
   # Event combining
-  PROD_TRIGGERED_EVENT_run3oo
+  PROD_TRIGGERED_EVENT_run3oo:
     config: run3oo_calo_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
     # runs: [82374 82703]
@@ -16,7 +16,7 @@ sphnxprod03:
     dstspider: on
 
   # Waveform fitting
-  PROD_CALOFITTING_run3oo
+  PROD_CALOFITTING_run3oo:
     config: run3oo_calo_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
     jobprio: 60
@@ -24,7 +24,7 @@ sphnxprod03:
     dstspider: on
 
   # Jet skimmer
-  PROD_JETSKIMMER_run3oo
+  PROD_JETSKIMMER_run3oo:
     config: run3oo_calo_physics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
     jobprio: 30
