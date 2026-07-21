@@ -8,8 +8,7 @@
 # /sphenix/u/sphnxpro/Production2026/run2pp_calo_pro001_pcdb001_v001/dir_run2pp_calo_pro001_pcdb001_v001/pilots/autopilot_run2pp_calo_physics_pro001_pcdb001_v001.yaml
 # /sphenix/u/sphnxpro/Production2026/run2auau_calo_pro001_pcdb001_v001/dir_run2auau_calo_pro001_pcdb001_v001/pilots/autopilot_run2auau_calo_physics_pro001_pcdb001_v001.yaml
 /sphenix/u/sphnxpro/Production2026/run3auau_calo_pro001_pcdb001_v001/dir_run3auau_calo_pro001_pcdb001_v001/pilots/autopilot_run3auau_calo_physics_pro001_pcdb001_v001.yaml
-# /sphenix/u/sphnxpro/Production2026/run3pp_calo_pro001_pcdb001_v001/thisProd_run3pp/pilots/autopilot_run3pp_calo_physics_run3pp_calo_physics_pro001_pcdb001_v001.yaml
-# /sphenix/u/sphnxpro/Production2026/vernier_pro001_pcdb001_v001/thisProd/pilots/autopilot_vernier_pro001_pcdb001_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3pp_calo_pro001_pcdb001_v001/thisProd_run3pp/pilots/autopilot_run3pp_calo_physics_run3pp_calo_physics_pro001_pcdb001_v001.yaml
 ## Testing:
 ### condor testing
 # /sphenix/u/sphnxpro/Production2026/prodmacros/testing/pilots/autopilot_testing_ppseed.yaml
