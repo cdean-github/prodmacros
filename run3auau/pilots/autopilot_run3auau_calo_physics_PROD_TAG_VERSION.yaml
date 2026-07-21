@@ -1,7 +1,7 @@
 sphnxprod03:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd
     submitdir:  /sphenix/data/data03/sphnxpro/production/run3auau/submission/{rule}
 
   # Event combining

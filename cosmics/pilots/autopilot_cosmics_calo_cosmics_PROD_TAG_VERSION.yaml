@@ -3,24 +3,24 @@
 sphnxprod02:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/cosmics_calo_pro001_pcdb001_v001/cosmics/rules
+    configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd
     submitdir:  /sphenix/data/data03/sphnxpro/production/cosmics/submission/{rule}
 
   # Event combining
-  prod1_TRIGGERED_EVENT_cosmics:
-    config: cosmics_calo_cosmics_pro001_pcdb001_v001.yaml
-    #runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/runlist
-    runs: [82716 82744]
+  PROD_TRIGGERED_EVENT_cosmics:
+    config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
+    # runs: [82716 82744]
     jobprio: 90
     submit: on
     dstspider: on
     finishmon: on
 
   # HCal cosmics analysis
-  prod1_HCALCOSMICS_cosmics:
-    config: cosmics_calo_cosmics_pro001_pcdb001_v001.yaml
-    #runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/dir_BRANCH/runlist
-    runs: [82716 82744]
+  PROD_HCALCOSMICS_cosmics:
+    config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
+    # runs: [82716 82744]
     jobprio: 60
     submit: on
     dstspider: on

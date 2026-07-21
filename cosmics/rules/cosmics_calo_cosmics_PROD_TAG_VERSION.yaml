@@ -1,13 +1,13 @@
 #______________________________________________________________________________
-prod1_TRIGGERED_EVENT_cosmics:
+PROD_TRIGGERED_EVENT_cosmics:
   params:
     dsttype:      DST_TRIGGERED_EVENT
     period:       cosmics
     physicsmode:  cosmics
     dataset:      cosmics
-    build:        pro.001
-    dbtag:        pcdb001
-    version:      1
+    build:        PROD
+    dbtag:        TAG
+    version:      VERSION
 
   input:
     db:             rawr
@@ -30,20 +30,20 @@ prod1_TRIGGERED_EVENT_cosmics:
       condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________
-prod1_HCALCOSMICS_cosmics:
+PROD_HCALCOSMICS_cosmics:
   params:
     dsttype:      DST_CALOFITTING
     period:       cosmics
     physicsmode:  cosmics
     dataset:      cosmics
-    build:        pro.001
-    dbtag:        2025p012
-    version:      1
+    build:        PROD
+    dbtag:        TAG
+    version:      VERSION
 
   input:
     db:           fcr
     table:        datasets
-    intriplet:    pro001_pcdb001_v001  # This is the output triplet of the previous rule
+    intriplet:    PROD_TAG_VERSION  # This is the output triplet of the previous rule
 
   job:
     script:                 run_hcalcosmics.sh
