@@ -14,7 +14,6 @@ sphnxprod02:
     jobprio: 90
     submit: on
     dstspider: on
-    finishmon: on
 
   # HCal cosmics analysis
   PROD_HCALCOSMICS_cosmics:
@@ -24,6 +23,5 @@ sphnxprod02:
     jobprio: 60
     submit: on
     dstspider: on
-    finishmon: on
 
 ###############################################################################
