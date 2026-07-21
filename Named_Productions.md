@@ -422,26 +422,30 @@ Connect to the file catalog database:
 psql -d FileCatalog -h sphnxdbmaster.sdcc.bnl.gov
 ```
 
-For each DST type, delete from `files` first, then `datasets`. If unsure about the scope, probe with a `SELECT` before deleting. Repeat for all three types:
+For each DST type, delete from `files` first, then `datasets`. Use a leading and trailing `%` in the `dsttype` pattern, without an extra `_` before the final `%`. If unsure about the scope, probe with a `SELECT` before deleting. Repeat for all relevant types:
 ```sql
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_STREAMING_EVENT_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_STREAMING_EVENT_%';
+delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT%';
+delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT%';
 
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_CLUSTER_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_CLUSTER_%';
+delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER%';
+delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER%';
 
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
+delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED%';
+delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED%';
 ```
+
+Some production steps write additional file catalog types. Include these in the file catalog cleanup for the corresponding primary type:
+- `DST_JETCALO`: also delete `DST_Jet` and `HIST_JETQA`
+- `DST_CALOFITTING`: also delete `DST_ZDC_RAW`, `DST_SEPD_RAW`, and `HIST_CALOFITTINGQA`
 
 Also clean up the production database:
 ```bash
 psql -d Production -h sphnxproddbmaster.sdcc.bnl.gov -U argouser
 ```
 ```sql
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT_%';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT%';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER%';
+delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED%';
 ```
 
 With physical files and both databases cleared, the system is in a clean state. To restart the production, simply uncomment the line in `active_productions.txt` — the cron job will pick it up within minutes.
