@@ -3,7 +3,7 @@
 sphnxprod02:
   defaultlocations:
     prodbase:   /sphenix/u/sphnxpro/Production2026/sphenixprod
-    configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd
+    configbase: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/rules
     submitdir:  /sphenix/data/data03/sphnxpro/production/cosmics/submission/{rule}
 
   # Event combining
@@ -15,13 +15,23 @@ sphnxprod02:
     submit: on
     dstspider: on
 
-  # HCal cosmics analysis
-  PROD_HCALCOSMICS_cosmics:
+  # Waveform fitting
+  PROD_CALOFITTING_cosmics:
     config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
     # runs: [82716 82744]
     jobprio: 60
     submit: on
     dstspider: on
+
+  # HCalCosmics is an alternate lightweight producer of DST_CALOFITTING; keep it disabled
+  # while standard CALOFITTING owns this dsttype for autopilot reproduction.
+  # PROD_HCALCOSMICS_cosmics:
+  #   config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
+  #   runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
+  #   # runs: [82716 82744]
+  #   jobprio: 60
+  #   submit: on
+  #   dstspider: on
 
 ###############################################################################

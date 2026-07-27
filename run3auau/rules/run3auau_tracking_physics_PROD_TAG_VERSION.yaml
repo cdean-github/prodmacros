@@ -1,10 +1,10 @@
 #______________________________________________________________________________________________________________________
-PROD_STREAMING_EVENT_run3oo:
+PROD_STREAMING_EVENT_run3auau:
   params:
     dsttype:     DST_STREAMING_EVENT
-    period:      run3oo
+    period:      run3auau
     physicsmode: physics
-    dataset:     run3oo
+    dataset:     run3auau
     build:       PROD
     dbtag:       TAG
     version:     VERSION
@@ -25,12 +25,12 @@ PROD_STREAMING_EVENT_run3oo:
     priority:              '90'
 
 #______________________________________________________________________________________________________________________
-PROD_TRKR_CLUSTER_run3oo:
+PROD_TRKR_CLUSTER_run3auau:
   params:
     dsttype:     DST_TRKR_CLUSTER
-    period:      run3oo
+    period:      run3auau
     physicsmode: physics
-    dataset:     run3oo
+    dataset:     run3auau
     build:       PROD
     dbtag:       TAG
     version:     VERSION
@@ -49,12 +49,12 @@ PROD_TRKR_CLUSTER_run3oo:
     priority:              '60'
 
 #______________________________________________________________________________________________________________________
-PROD_TRKR_SEED_run3oo:
+PROD_TRKR_SEED_run3auau:
   params:
     dsttype:     DST_TRKR_SEED
-    period:      run3oo
+    period:      run3auau
     physicsmode: physics
-    dataset:     run3oo
+    dataset:     run3auau
     build:       PROD
     dbtag:       TAG
     version:     VERSION
