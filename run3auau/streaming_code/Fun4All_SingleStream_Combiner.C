@@ -2,10 +2,10 @@
 
 #include <inttcalib/InttCalib.h>
 
-#include <ffamodules/HeadReco.h>
-#include <ffamodules/FlagHandler.h>
-#include <ffamodules/SyncReco.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+#include <ffamodules/HeadReco.h>
+#include <ffamodules/SyncReco.h>
 
 #include <ffarawmodules/InttCheck.h>
 #include <ffarawmodules/StreamingCheck.h>
@@ -32,8 +32,6 @@
 
 #include <format>
 #include <fstream>
-#include <string>
-#include <vector>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
@@ -45,45 +43,44 @@ bool isGood(const std::string &infile);
 int getrunnumber(const std::string &listfile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
-				   const int  /*runnumber1*/ = 30117,
-				   const std::string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
-				   const std::string&  /*histdir*/ = "/sphenix/data/data02/sphnxpro/single_streamhist/",
-				   const std::string &type = "beam",
-				   const int neventsper = 100,
-				   const std::string &dbtag = "newcdbtag",
-				   const std::string &input_gl1file = "gl1daq.list",
-				   const std::string &input_tpcfile00 = "tpc00.list",
-				   const std::string &input_inttfile00 = "intt0.list",
-				   const std::string &input_mvtxfile00 = "mvtx0.list",
-				   const std::string &input_tpotfile = "tpot.list")
+                                   const int /*runnumber1*/ = 30117,
+                                   const std::string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
+                                   const std::string & /*histdir*/ = "/sphenix/data/data02/sphnxpro/single_streamhist/",
+                                   const std::string &type = "beam",
+                                   const int neventsper = 100,
+                                   const std::string &dbtag = "newcdbtag",
+                                   const std::string &input_gl1file = "gl1daq.list",
+                                   const std::string &input_tpcfile00 = "tpc00.list",
+                                   const std::string &input_inttfile00 = "intt0.list",
+                                   const std::string &input_mvtxfile00 = "mvtx0.list",
+                                   const std::string &input_tpotfile = "tpot.list")
 {
   int registered_subsystems = 0;
-// GL1 which provides the beam clock reference (if we ran with GL1)
+  // GL1 which provides the beam clock reference (if we ran with GL1)
   std::vector<std::string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
 
- 
-// MVTX
+  // MVTX
   std::vector<std::string> mvtx_infile;
   mvtx_infile.push_back(input_mvtxfile00);
 
-// INTT
+  // INTT
   std::vector<std::string> intt_infile;
   intt_infile.push_back(input_inttfile00);
 
   std::vector<std::string> tpc_infile;
   tpc_infile.push_back(input_tpcfile00);
 
-// TPOT
+  // TPOT
   std::vector<std::string> tpot_infile;
   tpot_infile.push_back(input_tpotfile);
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
-  se->VerbosityDownscale(10000); // only print every 10000th event
+  se->VerbosityDownscale(10000);  // only print every 10000th event
 
-// Get the runnumber from the filename
-    int runnumber = -99999;
+  // Get the runnumber from the filename
+  int runnumber = -99999;
   if (!gl1_infile.empty())
   {
     runnumber = getrunnumber(gl1_infile[0]);
@@ -107,16 +104,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
-  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   rc->set_IntFlag("RUNNUMBER", runnumber);
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
-//  in->Verbosity(3);
+  //  in->Verbosity(3);
 
-// create and register input managers
+  // create and register input managers
   int i = 0;
 
-  for (const auto& iter : gl1_infile)
+  for (const auto &iter : gl1_infile)
   {
     if (isGood(iter))
     {
@@ -129,24 +126,23 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   }
   i = 0;
 
-  
   bool isInttStreaming = true;
-  for (const auto& iter : intt_infile)
+  for (const auto &iter : intt_infile)
   {
     if (isGood(iter))
     {
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + std::to_string(i));
-      //intt_sngl->Verbosity(3);
-   
+      // intt_sngl->Verbosity(3);
+
       /// find the ebdc number from the filename
       std::string filepath;
       std::string felix;
       std::ifstream ifs(iter);
-      while(std::getline(ifs, filepath))
+      while (std::getline(ifs, filepath))
       {
-	auto pos = filepath.find("intt");
-	felix = filepath.substr(pos+4, 1);
-	break;
+        auto pos = filepath.find("intt");
+        felix = filepath.substr(pos + 4, 1);
+        break;
       }
       intt_sngl->setHitContainerName("INTTRAWHIT_" + felix);
       intt_sngl->AddListFile(iter);
@@ -156,24 +152,23 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     }
   }
   i = 0;
-  for (const auto& iter : mvtx_infile)
+  for (const auto &iter : mvtx_infile)
   {
     if (isGood(iter))
     {
-
       /// find the ebdc number from the filename
       std::string filepath;
       std::string felix;
       std::ifstream ifs(iter);
-      while(std::getline(ifs, filepath))
+      while (std::getline(ifs, filepath))
       {
-	auto pos = filepath.find("mvtx");
-	felix = filepath.substr(pos+4, 1);
-	break;
+        auto pos = filepath.find("mvtx");
+        felix = filepath.substr(pos + 4, 1);
+        break;
       }
 
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + std::to_string(i));
-//    mvtx_sngl->Verbosity(5);
+      //    mvtx_sngl->Verbosity(5);
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
       mvtx_sngl->AddListFile(iter);
@@ -183,24 +178,23 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     }
   }
   i = 0;
-  for (const auto& iter : tpc_infile)
+  for (const auto &iter : tpc_infile)
   {
     if (isGood(iter))
     {
-
       /// find the ebdc number from the filename
       std::string filepath;
       std::string ebdc;
       std::ifstream ifs(iter);
-      while(std::getline(ifs, filepath))
+      while (std::getline(ifs, filepath))
       {
-	auto pos = filepath.find("ebdc");
-	ebdc = filepath.substr(pos+4, 4);
-	break;
+        auto pos = filepath.find("ebdc");
+        ebdc = filepath.substr(pos + 4, 4);
+        break;
       }
 
       SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + std::to_string(i));
-//    tpc_sngl->Verbosity(2);
+      //    tpc_sngl->Verbosity(2);
       //   tpc_sngl->DryRun();
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
       tpc_sngl->AddListFile(iter);
@@ -211,7 +205,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   }
   i = 0;
 
-  for (const auto& iter : tpot_infile)
+  for (const auto &iter : tpot_infile)
   {
     if (isGood(iter))
     {
@@ -241,24 +235,26 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   // tpccheck->SetBcoRange(130);
   // se->registerSubsystem(tpccheck);
 
-  for (const auto& iter : intt_infile)
+  for (const auto &iter : intt_infile)
   {
     if (isGood(iter))
     {
       std::string filepath;
       std::string felix;
       std::ifstream ifs(iter);
-      while(std::getline(ifs, filepath))
+      while (std::getline(ifs, filepath))
       {
-	auto pos = filepath.find("intt");
-	felix = filepath.substr(pos+4, 1);
-	break;
+        auto pos = filepath.find("intt");
+        felix = filepath.substr(pos + 4, 1);
+        break;
       }
       auto *inttcalib = new InttCalib("INTTCalib_" + felix);
       std::string hotmapfilename = std::format("./CALIB_HOTMAP_{}-{:08}-{:05}.root", type, runnumber, 0);
-      
+
       std::string bcomapfilename = std::format("./CALIB_BCOMAP_{}-{:08}-{:05}.root", type, runnumber, 0);
-      
+
+      //      std::string pngfilename = std::format("./CALIB_PNG_{}-{:08}-{:05}.root", type, runnumber, 0);
+
       inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
       inttcalib->SetHotMapCdbFile(hotmapfilename);
       inttcalib->SetBcoMapCdbFile(bcomapfilename);
@@ -268,7 +264,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       se->registerSubsystem(inttcalib);
     }
   }
-  
+
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
 
@@ -278,14 +274,13 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
-
   std::string outfile = std::format("./{}.root", type);
-  
-  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
+
+  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out", outfile);
   out->UseFileRule();
-  out->SetEventNumberRollover(neventsper); // event number for rollover
+  out->SetEventNumberRollover(neventsper);  // event number for rollover
   // out->SetNEvents(neventsper);                       // number of events per output file
-  out->SetClosingScript("./stageout.sh");      // script to call on file close (not quite working yet...)
+  out->SetClosingScript("./stageout.sh");  // script to call on file close (not quite working yet...)
   // out->SetClosingScriptArgs(outdir + " " + "0");  // with dbid
   out->SetClosingScriptArgs(outdir);  // additional beyond the name of the file
   se->registerOutputManager(out);
@@ -299,7 +294,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   se->End();
 
   std::string histoutfile = std::format("./HIST_{}-{:08}-{:05}.root", type, runnumber, 0);
-  QAHistManagerDef::saveQARootFile(histoutfile);  
+  QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
   std::cout << "all done" << std::endl;
@@ -313,7 +308,7 @@ bool isGood(const std::string &infile)
   bool goodfile = false;
   if (intest.is_open())
   {
-    if (intest.peek() != std::ifstream::traits_type::eof()) // is it non zero?
+    if (intest.peek() != std::ifstream::traits_type::eof())  // is it non zero?
     {
       goodfile = true;
     }
@@ -324,7 +319,7 @@ bool isGood(const std::string &infile)
 
 int getrunnumber(const std::string &listfile)
 {
-  if (! isGood(listfile))
+  if (!isGood(listfile))
   {
     std::cout << "listfile " << listfile << " is bad" << std::endl;
     gSystem->Exit(1);
@@ -335,6 +330,6 @@ int getrunnumber(const std::string &listfile)
 
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
   int runnumber = runseg.first;
-//  int segment = abs(runseg.second);
+  //  int segment = abs(runseg.second);
   return runnumber;
 }
