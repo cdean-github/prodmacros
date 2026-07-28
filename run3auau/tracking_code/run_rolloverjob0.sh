@@ -18,7 +18,7 @@ echo neventsper=$neventsper
 segmultiplier=10
 echo HARDCODING segmultiplier=$segmultiplier
 startseg=$((seg * segmultiplier))
-echo "-->" startseg=$startseg
+echo "-->" startseg=$startseg 
 echo "---------------------------------------------"
 
 make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
@@ -38,3 +38,5 @@ echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 ## Stage out histos etc. here
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+
+
