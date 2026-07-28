@@ -118,7 +118,7 @@ void Fun4All_JobA(
   Reject_Laser_Events();
 
   Tracking_Reco_TrackSeed_run2pp();
-c
+
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
@@ -130,7 +130,7 @@ c
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("GL1RAWHIT");
-out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_MVTX");
   out->StripRunNode("CYLINDERGEOM_INTT");
   out->StripRunNode("TPCGEOMCONTAINER");
   out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");

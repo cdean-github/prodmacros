@@ -3,25 +3,15 @@
  * example showing how to unpack the raw hits into the offline tracker hit
  * format. No other reconstruction or analysis is performed
  */
+// GlobalVariables.C has to be first, leave empty line after it so clang-format
+// does not reshuffle it
+#include <GlobalVariables.C>
+
 #include <QA.C>
 
-#include <GlobalVariables.C>
 #include <Trkr_Clustering.C>
-#include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
-
-#include <fun4all/Fun4AllUtils.h>
-#include <fun4all/Fun4AllDstInputManager.h>
-#include <fun4all/Fun4AllDstOutputManager.h>
-#include <fun4all/Fun4AllInputManager.h>
-#include <fun4all/Fun4AllOutputManager.h>
-#include <fun4all/Fun4AllRunNodeInputManager.h>
-#include <fun4all/Fun4AllServer.h>
-
-#include <ffamodules/CDBInterface.h>
-#include <ffamodules/FlagHandler.h>
-
-#include <phool/recoConsts.h>
+#include <Trkr_RecoInit.C>
 
 #include <trackreco/DSTClusterPruning.h>
 
@@ -29,7 +19,18 @@
 #include <trackingqa/TpcSeedsQA.h>
 #include <trackingqa/TpcSiliconQA.h>
 
-#include <cstdio>
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4all/Fun4AllDstInputManager.h>
+#include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllInputManager.h>
+#include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
+#include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
+
+#include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
@@ -39,22 +40,23 @@ R__LOAD_LIBRARY(libtpc.so)
 R__LOAD_LIBRARY(libmicromegas.so)
 R__LOAD_LIBRARY(libtrack_reco.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
+
+
 void Fun4All_JobA(
     const int nEvents = 2,
-    const std::string& outfilename = "cosmicsseed",
-    const std::string& dbtag = "2024p007",
-    const std::string& filelist = "filelist.list")
+    const std::string &outfilename = "cosmicsseed",
+    const std::string &dbtag = "2024p007",
+    const std::string &filelist = "filelist.list")
 {
-
   gSystem->Load("libg4dst.so");
 
   auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
-  se->VerbosityDownscale(10); // only print every 1000th event
+  se->VerbosityDownscale(10);  // only print every 1000th event
   auto *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 
-  rc->set_StringFlag("CDB_GLOBALTAG", dbtag ); 
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -62,54 +64,52 @@ void Fun4All_JobA(
   std::ifstream ifs(filelist);
   std::string filepath;
   int i = 0;
-  while(std::getline(ifs,filepath))
+  int runNumber = 0;
+  while (std::getline(ifs, filepath))
+  {
+    if (i == 0)
     {
-      if(i==0)
-	{
-	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
-	   int runNumber = runseg.first;
-	   int segment = runseg.second;
-	   rc->set_IntFlag("RUNNUMBER", runNumber);
-	   rc->set_IntFlag("RUNSEGMENT", segment);
-	   rc->set_uint64Flag("TIMESTAMP", runNumber);
-	}
-      std::string inputname = "InputManager" + std::to_string(i);
-      auto *hitsin = new Fun4AllDstInputManager(inputname);
-      hitsin->fileopen(filepath);
-      se->registerInputManager(hitsin);
-      i++;
+      std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
+      runNumber = runseg.first;
+      int segment = runseg.second;
+      rc->set_IntFlag("RUNNUMBER", runNumber);
+      rc->set_IntFlag("RUNSEGMENT", segment);
+      rc->set_uint64Flag("TIMESTAMP", runNumber);
     }
-  
+    std::string inputname = "InputManager" + std::to_string(i);
+    auto *hitsin = new Fun4AllDstInputManager(inputname);
+    hitsin->fileopen(filepath);
+    se->registerInputManager(hitsin);
+    i++;
+  }
+
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
 
-  
   /*
    * Flags for seeding macro
    */
-  
   TRACKING::streaming_mode = false;
-  
+
   Enable::MVTX_APPLYMISALIGNMENT = true;
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
-  
+
   G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
   G4TRACKING::SC_CALIBMODE = false;
   G4TPC::REJECT_LASER_EVENTS = true;
-  
-    //to turn on the default static corrections, enable the two lines below
+
+  // to turn on the default static corrections, enable the two lines below
   G4TPC::ENABLE_STATIC_CORRECTIONS = true;
   G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
 
-  //to turn on the average corrections derived from simulation, enable the three lines below
-  //note: these are designed to be used only if static corrections are also applied
+  // to turn on the average corrections derived from simulation, enable the three lines below
+  // note: these are designed to be used only if static corrections are also applied
   G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
   G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
   G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
 
-  
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true
@@ -142,7 +142,7 @@ void Fun4All_JobA(
   seeder->reject_zsize1_clusters(true);
   seeder->SetSearchWindow(2.0, 0.05);  // (z width, phi width)
   seeder->SetMinHitsPerCluster(0);
-  seeder->SetClusAdd_delta_window(3.0,0.06);
+  seeder->SetClusAdd_delta_window(3.0, 0.06);
   seeder->SetMinClustersPerTrack(3);
   seeder->useFixedClusterError(true);
   // improves seeding performance by effectively seeding in drift time rather than z
@@ -169,7 +169,6 @@ void Fun4All_JobA(
   cprop->set_pp_mode(true);
   se->registerSubsystem(cprop);
 
-  
   // apply preliminary distortion corrections to TPC clusters before crossing is known
   // and refit the trackseeds. Replace KFProp fits with the new fit parameters in the TPC seeds.
   auto *prelim_distcorr = new PrelimDistortionCorrection;
@@ -177,7 +176,6 @@ void Fun4All_JobA(
   prelim_distcorr->Verbosity(0);
   se->registerSubsystem(prelim_distcorr);
 
-  
   /*
    * Track Matching between silicon and TPC
    */
@@ -187,33 +185,33 @@ void Fun4All_JobA(
   silicon_match->Verbosity(0);
   silicon_match->Verbosity(0);
   silicon_match->set_pp_mode(TRACKING::streaming_mode);
-  if(G4TPC::ENABLE_AVERAGE_CORRECTIONS)
+  if (G4TPC::ENABLE_AVERAGE_CORRECTIONS)
   {
     // for general tracking
     // Eta/Phi window is determined by 3 sigma window
     // X/Y/Z window is determined by 4 sigma window
-    silicon_match->window_deta.set_posQoverpT_maxabs({-0.014,0.0331,0.48});
-    silicon_match->window_deta.set_negQoverpT_maxabs({-0.006,0.0235,0.52});
+    silicon_match->window_deta.set_posQoverpT_maxabs({-0.014, 0.0331, 0.48});
+    silicon_match->window_deta.set_negQoverpT_maxabs({-0.006, 0.0235, 0.52});
     silicon_match->set_deltaeta_min(0.03);
-    silicon_match->window_dphi.set_QoverpT_range({-0.15,0,0}, {0.15,0,0});
-    silicon_match->window_dx.set_QoverpT_maxabs({3.0,0,0});
-    silicon_match->window_dy.set_QoverpT_maxabs({3.0,0,0});
-    silicon_match->window_dz.set_posQoverpT_maxabs({1.138,0.3919,0.84});
-    silicon_match->window_dz.set_negQoverpT_maxabs({0.719,0.6485,0.65});
+    silicon_match->window_dphi.set_QoverpT_range({-0.15, 0, 0}, {0.15, 0, 0});
+    silicon_match->window_dx.set_QoverpT_maxabs({3.0, 0, 0});
+    silicon_match->window_dy.set_QoverpT_maxabs({3.0, 0, 0});
+    silicon_match->window_dz.set_posQoverpT_maxabs({1.138, 0.3919, 0.84});
+    silicon_match->window_dz.set_negQoverpT_maxabs({0.719, 0.6485, 0.65});
     silicon_match->set_crossing_deltaz_max(30);
     silicon_match->set_crossing_deltaz_min(2);
 
     // for distortion correction using SI-TPOT fit and track pT>0.5
     if (G4TRACKING::SC_CALIBMODE)
     {
-      silicon_match->window_deta.set_posQoverpT_maxabs({0.016,0.0060,1.13});
-      silicon_match->window_deta.set_negQoverpT_maxabs({0.022,0.0022,1.44});
+      silicon_match->window_deta.set_posQoverpT_maxabs({0.016, 0.0060, 1.13});
+      silicon_match->window_deta.set_negQoverpT_maxabs({0.022, 0.0022, 1.44});
       silicon_match->set_deltaeta_min(0.03);
-      silicon_match->window_dphi.set_QoverpT_range({-0.15,0,0}, {0.09,0,0});
-      silicon_match->window_dx.set_QoverpT_maxabs({2.0,0,0});
-      silicon_match->window_dy.set_QoverpT_maxabs({1.5,0,0});
-      silicon_match->window_dz.set_posQoverpT_maxabs({1.213,0.0211,2.09});
-      silicon_match->window_dz.set_negQoverpT_maxabs({1.307,0.0001,4.52});
+      silicon_match->window_dphi.set_QoverpT_range({-0.15, 0, 0}, {0.09, 0, 0});
+      silicon_match->window_dx.set_QoverpT_maxabs({2.0, 0, 0});
+      silicon_match->window_dy.set_QoverpT_maxabs({1.5, 0, 0});
+      silicon_match->window_dz.set_posQoverpT_maxabs({1.213, 0.0211, 2.09});
+      silicon_match->window_dz.set_negQoverpT_maxabs({1.307, 0.0001, 4.52});
       silicon_match->set_crossing_deltaz_min(1.2);
     }
   }
@@ -231,7 +229,6 @@ void Fun4All_JobA(
   mm_match->set_test_windows_printout(false);  // used for tuning search windows only
   se->registerSubsystem(mm_match);
 
-  
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
@@ -291,7 +288,7 @@ void Fun4All_JobA(
   findertpc->setTrackPtCut(0.2);
   findertpc->setBeamLineCut(1.5);
   findertpc->setTrackQualityCut(1000000000);
-  //findertpc->setNmvtxRequired(3);
+  // findertpc->setNmvtxRequired(3);
   findertpc->setRequireMVTX(false);
   findertpc->setOutlierPairCut(0.1);
   findertpc->setTrackMapName("TpcSvtxTrackMap");
@@ -307,11 +304,9 @@ void Fun4All_JobA(
   auto *tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
 
-
-  
   auto *clusterPruner = new DSTClusterPruning("DSTClusterPruning");
   se->registerSubsystem(clusterPruner);
-  
+
   se->run(nEvents);
   se->End();
 
