@@ -90,7 +90,7 @@ void Fun4All_JobA(
    * Flags for seeding macro
    */
   
-  TRACKING::pp_mode = false;
+  TRACKING::streaming_mode = false;
   
   Enable::MVTX_APPLYMISALIGNMENT = true;
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
@@ -115,20 +115,10 @@ void Fun4All_JobA(
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true
   Reject_Laser_Events();
 
-/*
+  /*
    * Silicon Seeding
    */
-  auto *silicon_Seeding = new PHActsSiliconSeeding;
-  silicon_Seeding->Verbosity(0);
-  silicon_Seeding->setStrobeRange(-5,5);
-  silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(0.4);
-  silicon_Seeding->setinttZSearchWindow(2.0);
-  se->registerSubsystem(silicon_Seeding);
-
-  auto *merger = new PHSiliconSeedMerger;
-  merger->Verbosity(0);
-  se->registerSubsystem(merger);
+  Tracking_Reco_SiliconSeed_run2pp();
 
   /*
    * Tpc Seeding
@@ -196,7 +186,7 @@ void Fun4All_JobA(
   auto *silicon_match = new PHSiliconTpcTrackMatching;
   silicon_match->Verbosity(0);
   silicon_match->Verbosity(0);
-  silicon_match->set_pp_mode(TRACKING::pp_mode);
+  silicon_match->set_pp_mode(TRACKING::streaming_mode);
   if(G4TPC::ENABLE_AVERAGE_CORRECTIONS)
   {
     // for general tracking

@@ -324,7 +324,7 @@ void Fun4All_JobC(
    * flags for tracking
    */
   G4TPC::REJECT_LASER_EVENTS = true;
-  TRACKING::pp_mode = true;
+  TRACKING::streaming_mode = true;
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true

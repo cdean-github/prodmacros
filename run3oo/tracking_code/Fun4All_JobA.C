@@ -93,7 +93,7 @@ void Fun4All_JobA(
    * Flags for seeding macro
    */
   TpcReadoutInit(runNumber);
-  TRACKING::pp_mode = true;
+  TRACKING::streaming_mode = true;
 
   Enable::MVTX_APPLYMISALIGNMENT = true;
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
@@ -118,8 +118,7 @@ void Fun4All_JobA(
   Reject_Laser_Events();
 
   Tracking_Reco_TrackSeed_run2pp();
-
-  Tracking_Reco_TrackMatching_run2pp();
+c
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
@@ -155,7 +154,7 @@ out->StripRunNode("CYLINDERGEOM_MVTX");
   finder->setTrackQualityCut(1000000000);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
-  finder->set_pp_mode(TRACKING::pp_mode);
+  finder->set_pp_mode(TRACKING::streaming_mode);
   finder->setTrackMapName("SiliconSvtxTrackMap");
   finder->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(finder);
@@ -192,9 +191,6 @@ out->StripRunNode("CYLINDERGEOM_MVTX");
   tpcqa->setVertexMapName("TpcSvtxVertexMap");
   tpcqa->setSegment(rc->get_IntFlag("RUNSEGMENT"));
   se->registerSubsystem(tpcqa);
-
-  auto *tpcsiliconqa = new TpcSiliconQA;
-  se->registerSubsystem(tpcsiliconqa);
 
   auto *clusterPruner = new DSTClusterPruning("DSTClusterPruning");
   clusterPruner->pruneAllSeeds();

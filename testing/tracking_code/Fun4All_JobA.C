@@ -93,7 +93,7 @@ void Fun4All_JobA(
    * Flags for seeding macro
    */
   TpcReadoutInit(runNumber);
-  TRACKING::pp_mode = true;
+  TRACKING::streaming_mode = true;
 
   Enable::MVTX_APPLYMISALIGNMENT = true;
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
@@ -151,7 +151,7 @@ void Fun4All_JobA(
   finder->setTrackQualityCut(1000000000);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
-  finder->set_pp_mode(TRACKING::pp_mode);
+  finder->set_pp_mode(TRACKING::streaming_mode);
   finder->setTrackMapName("SiliconSvtxTrackMap");
   finder->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(finder);
