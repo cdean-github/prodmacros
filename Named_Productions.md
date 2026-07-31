@@ -180,6 +180,13 @@ sed -i "s/build:.*PROD/build:        ${PROD_BUILD}/g" ${SET_TYPE_MODE}_${TRIPLET
 sed -i "s/dbtag:.*TAG/dbtag:        ${PROD_DBTAG}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/version:.*VERSION/version:      ${PROD_VERSION#v}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/intriplet:.*PROD_TAG_VERSION/intriplet:   ${TRIPLET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_STREAMING_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_STREAMING_EVENT_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_CLUSTER_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_CLUSTER_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_SEED_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_SEED_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_TRACKS_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_TRACKS_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRIGGERED_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRIGGERED_EVENT_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_CALOFITTING_${PROD_DATASET}/${PROD_BUILD_TEXT}_CALOFITTING_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_JETSKIMMER_${PROD_DATASET}/${PROD_BUILD_TEXT}_JETSKIMMER_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
 
 
@@ -205,7 +212,7 @@ git mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MOD
 ```
 Automatically apply substitutions for rule names, paths, and config file names:
 ```bash
-sed -i "s|configbase:.*BRANCH|configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/thisProd/rules|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s|configbase:.*BRANCH|configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_STREAMING_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_STREAMING_EVENT_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_TRKR_CLUSTER_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_CLUSTER_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_TRKR_SEED_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_SEED_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
