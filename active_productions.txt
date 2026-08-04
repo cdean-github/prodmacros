@@ -15,3 +15,8 @@
 # /sphenix/u/sphnxpro/Production2026/prodmacros/testing/pilots/autopilot_testing_ppseed.yaml
 ### dev testing
 # /sphenix/u/sphnxpro/Production2026/prodmacros/testing/pilots/autopilot_testing3pp_v666.yaml
+
+# run3auau, run3pp, run3oo ana561
+/sphenix/u/sphnxpro/Production2026/run3auau_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3auau_tracking_physics_ana561_2025p013_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3pp_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3pp_tracking_physics_ana561_2025p013_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3oo_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3oo_tracking_physics_ana561_2025p013_v001.yaml
