@@ -119,6 +119,7 @@ void Fun4All_JobA(
 
   Tracking_Reco_TrackSeed_run2pp();
 
+  Tracking_Reco_TpcTpotTrackMatching_run2pp();
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
