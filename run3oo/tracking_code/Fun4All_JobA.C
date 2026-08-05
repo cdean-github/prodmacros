@@ -118,8 +118,7 @@ void Fun4All_JobA(
   Reject_Laser_Events();
 
   Tracking_Reco_TrackSeed_run2pp();
-
-  Tracking_Reco_TpcTpotTrackMatching_run2pp();
+  Tracking_Reco_TrackMatching_run2pp();
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
