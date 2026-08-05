@@ -21,7 +21,7 @@ echo "---------------------------------------------"
 make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
 echo "$make_filelists"
 eval "$make_filelists"
-. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh
 
 root_line="Fun4All_JobA.C(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"

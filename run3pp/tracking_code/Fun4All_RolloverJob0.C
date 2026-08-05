@@ -40,7 +40,6 @@
 
 #include <format>
 #include <fstream>
-
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
@@ -200,16 +199,13 @@ void Fun4All_RolloverJob0(
     out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
   }
-  
   out->StripRunNode("CYLINDERGEOM_MVTX");
   out->StripRunNode("CYLINDERGEOM_INTT");
   out->StripRunNode("TPCGEOMCONTAINER");
   out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
   out->StripRunNode("GEOMETRY_IO");
- 
   out->SetEventNumberRollover(neventsper);  // event number for rollover
   out->StartSegment(startseg);              // starting segment number
-
   out->UseFileRule();
   out->SetClosingScript("./stageout.sh");
   out->SetClosingScriptArgs(outdir);
