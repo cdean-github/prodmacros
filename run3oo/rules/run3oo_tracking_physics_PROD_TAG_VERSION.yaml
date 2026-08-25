@@ -19,7 +19,7 @@ PROD_STREAMING_EVENT_run3oo:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [../streaming_code/*]
-    request_memory:         2.5GB, 4GB, 8GB, 25GB
+    request_memory:         2.5GB, 3.9GB, 8GB, 25GB
     request_xferslots:     '3'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
