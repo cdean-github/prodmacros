@@ -107,7 +107,7 @@ void Fun4All_PolySeeding(
     const int neventsper = 100,
     const int startseg = 0,
     const std::string &dbtag = "2025p013",
-    const std::string &filelist = "filelist.list",
+    const std::string &filelist = "filelistold.list",
     const std::string &histdir = "")
 {
   const bool convertSeeds = false;
@@ -274,6 +274,8 @@ void Fun4All_PolySeeding(
 
   TPC_LaserClustering();
   Reject_Laser_Events();
+
+  Tracking_Reco_TrackMatching_run2pp();
   
   auto *clusterPruner = new DSTClusterPruning("DSTClusterPruning");
   clusterPruner->pruneAllSeeds();
