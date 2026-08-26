@@ -1,12 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 ## Tedium common to all run scripts. Important, source, not execute!
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
 echo "Initialization done; back in $0"
-##
 
-echo "Running clustering (job0) for run ${run}, seg ${seg}"
+echo "---------------------------------------------"
+echo "Running Fitting (jobC) for run ${run}, seg {segment}"
+echo "---------------------------------------------"
+echo "--- Collecting input files"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
 echo dataset=$dataset
@@ -14,31 +16,27 @@ echo dsttype=$dsttype
 echo intriplet=$intriplet
 echo run=$run
 echo seg=$seg
-echo neventsper=$neventsper
-segmultiplier=10
-echo HARDCODING segmultiplier=$segmultiplier
-startseg=$((seg * segmultiplier))
-echo "-->" startseg=$startseg
-endseg=$((startseg + segmultiplier - 1))
-echo "INFO: DST_TRKR_CLUSTER rollover input segment ${seg} maps to output segments ${startseg}..${endseg}."
 echo "---------------------------------------------"
 
 make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
 echo "$make_filelists"
 eval "$make_filelists"
-. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/stagein.sh --checkonly
 
-stump=${logbase%%-*}  # Remove run/segment bit from the name. Same as stump=$(echo "$logbase" | cut -d- -f1)
-stump=${stump}.root   # Restore .root
-
-root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${outdir}\",\"${stump}\",${neventsper},${startseg},\"${dbtag}\",\"infile.list\",\"${histdir}\")"
+root_line="Fun4All_JobC.C(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
 
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
-## Stage out histos etc. here
-echo "INFO: DST_TRKR_CLUSTER rollover completed for input segment ${seg}; output segments ${startseg}..${endseg}."
+echo ./stageout.sh ${logbase}.root ${outdir} ${dbid}
+. ./stageout.sh ${logbase}.root ${outdir} ${dbid}
+
+for hfile in HIST_*.root; do
+    echo stageout.sh ${hfile} to ${histdir}
+    . ./stageout.sh ${hfile} ${histdir}
+done
+
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 

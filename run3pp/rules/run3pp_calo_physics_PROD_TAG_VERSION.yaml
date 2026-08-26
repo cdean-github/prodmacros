@@ -47,7 +47,7 @@ PROD_CALOFITTING_run3pp:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             100000
     payload:                [../calo_code/*]
-    request_memory:         2500MB, 4GB, 6GB
+    request_memory:         2500MB, 3.9GB, 6GB
     request_cpus:          '1'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
@@ -77,7 +77,7 @@ PROD_JETSKIMMER_run3pp:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             100000
     payload:                [../calo_code/*]
-    request_memory:         2500MB, 4GB, 6GB
+    request_memory:         2500MB, 3.9GB, 6GB
     request_cpus:          '1'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'

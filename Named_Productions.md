@@ -212,7 +212,7 @@ git mv autopilot_${SET_TYPE_MODE}_PROD_TAG_VERSION.yaml autopilot_${SET_TYPE_MOD
 ```
 Automatically apply substitutions for rule names, paths, and config file names:
 ```bash
-sed -i "s|configbase:.*BRANCH|configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s|configbase:.*BRANCH|configbase: /sphenix/u/sphnxpro/Production2026/${PROD_DATASET}_${PROD_TYPE}_${TRIPLET}/thisProd/rules|g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_STREAMING_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_STREAMING_EVENT_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_TRKR_CLUSTER_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_CLUSTER_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/PROD_TRKR_SEED_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_SEED_${PROD_DATASET}/g" autopilot_${SET_TYPE_MODE}_${TRIPLET}.yaml
@@ -328,7 +328,7 @@ git commit -a -m "$cmessage"
 And create an annotated tag, reusing the name we've given this production. Then push everything to github.
 ```bash
 git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET} -m "$cmessage"
-git push --follow-tags
+git push -u origin HEAD --follow-tags
 ```
 
 If you need to make corrections later, get the latest tag and append `_fixN`:
@@ -336,7 +336,7 @@ If you need to make corrections later, get the latest tag and append `_fixN`:
 git tag | tail -1
 tag_run3oo_calo_pro001_pcdb001_v001
 git tag -a tag_run3oo_calo_pro001_pcdb001_v001_fix1 -m "Added ZDC fix"
-git push --follow-tags
+git push -u origin HEAD --follow-tags
 ```
 <!-- 
 ## Problem Solving While Running

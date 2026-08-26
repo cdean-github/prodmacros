@@ -22,7 +22,7 @@ PROD_TRIGGERED_EVENT_cosmics:
     payload:                [../triggered_code/*]
     request_memory:         2 GB, 3 GB, 5 GB
     request_xferslots:     '3'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
@@ -50,9 +50,9 @@ PROD_CALOFITTING_cosmics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             100000
     payload:                [../calo_code/*]
-    request_memory:         2500MB, 4GB, 6GB
+    request_memory:         2500MB, 3.9GB, 6GB
     request_cpus:          '1'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
@@ -80,9 +80,9 @@ PROD_HCALCOSMICS_cosmics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             100000
     payload:                [../calo_code/*]
-    request_memory:         2500MB, 4GB, 6GB
+    request_memory:         2500MB, 3.9GB, 6GB
     request_cpus:          '1'
-    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
