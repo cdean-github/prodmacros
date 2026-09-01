@@ -8,7 +8,7 @@
 
 ## Tracking:
 # Event combining for run3auau, run3pp, run3oo ana561
-# /sphenix/u/sphnxpro/Production2026/run3auau_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3auau_tracking_physics_ana561_2025p013_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3auau_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3auau_tracking_physics_ana561_2025p013_v001.yaml
 /sphenix/u/sphnxpro/Production2026/run3pp_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3pp_tracking_physics_ana561_2025p013_v001.yaml
 /sphenix/u/sphnxpro/Production2026/run3oo_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3oo_tracking_physics_ana561_2025p013_v001.yaml
 
@@ -18,8 +18,11 @@
 /sphenix/u/sphnxpro/Production2026/run3auau_tracking_ana564_2026p001_v001/thisProd/pilots/autopilot_run3auau_tracking_physics_ana564_2026p001_v001.yaml
 /sphenix/u/sphnxpro/Production2026/run3oo_tracking_ana564_2026p001_v001/thisProd/pilots/autopilot_run3oo_tracking_physics_ana564_2026p001_v001.yaml
 
-# Cosmics high-gain partial production, Aug 25, 2026 ana567_2026p001_v001
-/sphenix/u/sphnxpro/Production2026/cosmics_calo_ana567_2026p001_v001/thisProd/pilots/autopilot_cosmics_calo_cosmics_ana567_2026p001_v001.yaml
+# Cosmics high-gain partial production, Aug 25, 2026 ana568_2026p001_v001
+/sphenix/u/sphnxpro/Production2026/cosmics_calo_ana568_2026p001_v001/thisProd/pilots/autopilot_cosmics_calo_cosmics_ana568_2026p001_v001.yaml
 
 # Run3pp polyseed production, Aug 26, 2026 ana567_2026p001_v001
 /sphenix/u/sphnxpro/Production2026/run3pp_tracking_polyseed_ana567_2026p001_v001/thisProd/pilots/autopilot_run3pp_tracking_polyseed_physics_ana567_2026p001_v001.yaml
+/sphenix/u/sphnxpro/Production2026/run3pp_tracking_polyseed_ana567_2026p001_v002/thisProd/pilots/autopilot_run3pp_tracking_polyseed_physics_ana567_2026p001_v002.yaml
+/sphenix/u/sphnxpro/Production2026/run3pp_tracking_polyseed_ana567_2026p001_v003/thisProd/pilots/autopilot_run3pp_tracking_polyseed_physics_ana567_2026p001_v003.yaml
+/sphenix/u/sphnxpro/Production2026/run3pp_tracking_polyseed_ana567_2026p001_v004/thisProd/pilots/autopilot_run3pp_tracking_polyseed_physics_ana567_2026p001_v004.yaml

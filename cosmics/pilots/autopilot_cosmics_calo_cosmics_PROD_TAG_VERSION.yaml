@@ -15,23 +15,22 @@ sphnxprod02:
     submit: on
     dstspider: on
 
-  # Waveform fitting
-  PROD_CALOFITTING_cosmics:
-    config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
-    runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
-    # runs: [82716 82744]
-    jobprio: 60
-    submit: on
-    dstspider: on
-
-  # HCalCosmics is an alternate lightweight producer of DST_CALOFITTING; keep it disabled
-  # while standard CALOFITTING owns this dsttype for autopilot reproduction.
-  # PROD_HCALCOSMICS_cosmics:
+  # Waveform fitting (disabled while HCalCosmics owns DST_CALOFITTING)
+  # PROD_CALOFITTING_cosmics:
   #   config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
   #   runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
   #   # runs: [82716 82744]
   #   jobprio: 60
   #   submit: on
   #   dstspider: on
+
+  # HCalCosmics analysis
+  PROD_HCALCOSMICS_cosmics:
+    config: cosmics_calo_cosmics_PROD_TAG_VERSION.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/BRANCH/thisProd/runlist
+    # runs: [82716 82744]
+    jobprio: 60
+    submit: on
+    dstspider: on
 
 ###############################################################################
