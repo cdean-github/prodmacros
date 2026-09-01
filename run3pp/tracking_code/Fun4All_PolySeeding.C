@@ -155,6 +155,7 @@ void Fun4All_PolySeeding(
     
     std::string inputname = "InputManager" + std::to_string(i);
     auto *hitsin = new Fun4AllDstInputManager(inputname);
+    hitsin->TTreeCacheSize(0);
     hitsin->fileopen(filepath);
     se->registerInputManager(hitsin);
     i++;
