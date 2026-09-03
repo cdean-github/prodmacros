@@ -3,11 +3,28 @@
  * example showing how to unpack the raw hits into the offline tracker hit
  * format. No other reconstruction or analysis is performed
  */
-#include <QA.C>
 #include <GlobalVariables.C>
+
+#include <QA.C>
 #include <Trkr_Clustering.C>
 #include <Trkr_LaserClustering.C>
 #include <Trkr_RecoInit.C>
+
+#include <inttrawhitqa/InttQa.h>
+#include <inttrawhitqa/InttRawHitQA.h>
+
+#include <mvtxrawhitqa/MvtxRawHitQA.h>
+
+#include <tpcqa/TpcRawHitQA.h>
+#include <tpcqa/TpcLaserQA.h>
+
+#include <trackingqa/InttClusterQA.h>
+#include <trackingqa/MicromegasClusterQA.h>
+#include <trackingqa/MvtxClusterQA.h>
+#include <trackingqa/TpcClusterQA.h>
+
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -17,24 +34,10 @@
 #include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
-
-#include <trackingqa/InttClusterQA.h>
-#include <inttrawhitqa/InttQa.h>
-#include <trackingqa/MicromegasClusterQA.h>
-#include <trackingqa/MvtxClusterQA.h>
-#include <trackingqa/TpcClusterQA.h>
-
-#include <ffamodules/CDBInterface.h>
-#include <ffamodules/FlagHandler.h>
-#include <mvtxrawhitqa/MvtxRawHitQA.h>
-#include <inttrawhitqa/InttRawHitQA.h>
-#include <tpcqa/TpcRawHitQA.h>
-#include <tpcqa/TpcLaserQA.h>
 #include <phool/recoConsts.h>
-
-#include <cstdio>
-#include <sstream>
 #include <fstream>
+#include <format>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmvtx.so)
@@ -45,12 +48,17 @@ R__LOAD_LIBRARY(libinttrawhitqa.so)
 R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
-void Fun4All_SingleJob0(
+
+void Fun4All_RolloverJob0(
     const int nEvents = 2,
     const int  /*runnumber*/ = 41626,
-    const std::string& outfilename = "cosmics",
+    const std::string& outdir = ".",
+    const std::string& outfilename = "out.root",
+    const int neventsper = 100,
+    const int startseg = 0,
     const std::string& dbtag = "2024p001",
-    const std::string& filelist = "filelist.list")
+    const std::string& filelist = "filelist.list",
+    const std::string& histdir = "")
 {
 
   gSystem->Load("libg4dst.so");
@@ -80,7 +88,7 @@ void Fun4All_SingleJob0(
 	{
 	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
 	   int runNumber = runseg.first;
-	   
+	   //int segment = runseg.second;
 	   rc->set_IntFlag("RUNNUMBER", runNumber);
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
         
@@ -96,7 +104,6 @@ void Fun4All_SingleJob0(
       std::string inputname = "InputManager" + std::to_string(i);
       auto *hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
-      hitsin->CacheSize(0);
       se->registerInputManager(hitsin);
       i++;
     }
@@ -126,31 +133,20 @@ void Fun4All_SingleJob0(
     }
 
   std::cout << "Process endpoints is " << process_endpoints << std::endl;
-  std::ostringstream ebdcname;
+  std::string ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
       if(!process_endpoints)
 	{
-	  ebdcname.str("");
-	  if(ebdc < 10)
-	    {
-	      ebdcname<<"0";
-	    }
-	  ebdcname<<ebdc;
-	  Tpc_HitUnpacking(ebdcname.str());
+          ebdcname = std::format("{:02}",ebdc);
+	  Tpc_HitUnpacking(ebdcname);
 	}
-      
       else if(process_endpoints)
 	{
 	  for(int endpoint = 0; endpoint <2; endpoint++)
 	    {
-	      ebdcname.str("");
-	      if(ebdc < 10)
-		{
-		  ebdcname<<"0";
-		}
-	      ebdcname<<ebdc <<"_"<<endpoint;
-	      Tpc_HitUnpacking(ebdcname.str());
+	      ebdcname = std::format("{:02}_{}",ebdc,endpoint);
+	      Tpc_HitUnpacking(ebdcname);
 	    }
 	}
     }
@@ -162,6 +158,8 @@ void Fun4All_SingleJob0(
   Intt_Clustering();
 
   Tpc_LaserEventIdentifying();
+
+  TPC_LaminationClustering();
 
   TPC_LaserClustering();
 
@@ -190,8 +188,8 @@ void Fun4All_SingleJob0(
 
   auto *LaserQA = new TpcLaserQA;
   se->registerSubsystem(LaserQA);
-  
-  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
+  const std::string& dstoutname = outfilename;
+  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", dstoutname);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER");
@@ -201,15 +199,33 @@ void Fun4All_SingleJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
+    out->AddNode("LAMINATION_CLUSTER");
   }
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("TPCGEOMCONTAINER");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
+  out->SetEventNumberRollover(neventsper); // event number for rollover
+  out->StartSegment(startseg); // starting segment number
+  out->UseFileRule();
+  out->SetClosingScript("./stageout.sh");
+  out->SetClosingScriptArgs(outdir);
   se->registerOutputManager(out);
 
+  auto *hm = QAHistManagerDef::getHistoManager();
+  hm->CopyRolloverSetting(out);
+  std::string histoout = "HIST_" + outfilename;
+  hm->setOutfileName(histoout);
+  if ( !histdir.empty() )
+  {
+    hm->SetClosingScriptArgs(histdir);
+  } else {
+    hm->SetClosingScriptArgs(outdir);
+  }
+  
   se->run(nEvents);
   se->End();
-
-  TString qaname = "HIST_" + outfilename;
-  std::string qaOutputFileName(qaname.Data());
-  QAHistManagerDef::saveQARootFile(qaOutputFileName);
 
   CDBInterface::instance()->Print();
   se->PrintTimer();

@@ -19,7 +19,7 @@ PROD_STREAMING_EVENT_run3oo:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [../streaming_code/*]
-    request_memory:         1500MB, 2GB, 2500MB, 4GB, 6GB, 10GB
+    request_memory:         2.5GB, 3.9GB, 8GB, 25GB
     request_xferslots:     '3'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '90'
@@ -36,14 +36,14 @@ PROD_TRKR_CLUSTER_run3oo:
     version:     VERSION
 
   input:
-    intriplet:   PROD_TAG
+    intriplet:   PROD_TAG_VERSION
 
   job:
     script:                 run_rolloverjob0.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             1000
     payload:                [../tracking_code/*]
-    request_memory:         8GB, 12GB, 16GB
+    request_memory:         9GB, 14GB
     request_cpus:          '1'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '60'
@@ -60,14 +60,14 @@ PROD_TRKR_SEED_run3oo:
     version:     VERSION
 
   input:
-    intriplet:   PROD_TAG
+    intriplet:   PROD_TAG_VERSION
 
   job:
     script:                 run_jobA.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             1000
     payload:                [../tracking_code/*]
-    request_memory:         3GB, 4GB, 6GB
+    request_memory:         3GB, 4.5GB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{outtriplet}'
     priority:              '30'

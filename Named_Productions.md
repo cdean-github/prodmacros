@@ -180,6 +180,13 @@ sed -i "s/build:.*PROD/build:        ${PROD_BUILD}/g" ${SET_TYPE_MODE}_${TRIPLET
 sed -i "s/dbtag:.*TAG/dbtag:        ${PROD_DBTAG}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/version:.*VERSION/version:      ${PROD_VERSION#v}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 sed -i "s/intriplet:.*PROD_TAG_VERSION/intriplet:   ${TRIPLET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_STREAMING_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_STREAMING_EVENT_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_CLUSTER_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_CLUSTER_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_SEED_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_SEED_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRKR_TRACKS_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRKR_TRACKS_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_TRIGGERED_EVENT_${PROD_DATASET}/${PROD_BUILD_TEXT}_TRIGGERED_EVENT_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_CALOFITTING_${PROD_DATASET}/${PROD_BUILD_TEXT}_CALOFITTING_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
+sed -i "s/PROD_JETSKIMMER_${PROD_DATASET}/${PROD_BUILD_TEXT}_JETSKIMMER_${PROD_DATASET}/g" ${SET_TYPE_MODE}_${TRIPLET}.yaml
 ```
 
 
@@ -321,7 +328,7 @@ git commit -a -m "$cmessage"
 And create an annotated tag, reusing the name we've given this production. Then push everything to github.
 ```bash
 git tag -a tag_${PROD_DATASET}_${PROD_TYPE}_${TRIPLET} -m "$cmessage"
-git push --follow-tags
+git push -u origin HEAD --follow-tags
 ```
 
 If you need to make corrections later, get the latest tag and append `_fixN`:
@@ -329,7 +336,7 @@ If you need to make corrections later, get the latest tag and append `_fixN`:
 git tag | tail -1
 tag_run3oo_calo_pro001_pcdb001_v001
 git tag -a tag_run3oo_calo_pro001_pcdb001_v001_fix1 -m "Added ZDC fix"
-git push --follow-tags
+git push -u origin HEAD --follow-tags
 ```
 <!-- 
 ## Problem Solving While Running
@@ -345,7 +352,7 @@ done
 
 ## Aborting and Cleaning Up a Production
 
-This section walks through stopping and completely removing a production. We use the three-step tracking production `ana548_FieldMapTest_v666` as a concrete example. All three steps here share a single triplet — this is specific to this production; in general, different steps may have different triplets and each needs its own cleanup pass.
+This section walks through stopping and completely removing a production. We use the three-step tracking production `ana561_2025p013_v001` as a concrete example. All three steps here share a single triplet — this is specific to this production; in general, different steps may have different triplets and each needs its own cleanup pass.
 
 Physical deletion of output files is necessary to avoid collisions if the production is restarted and to prevent stale or incorrect data from persisting. The file catalog and physical files must always be in agreement — deleting one without the other leaves the system in an inconsistent state. The cleanup order matters: the file catalog is queried first to determine whether a file needs to be reproduced, followed by the production database.
 
@@ -353,7 +360,7 @@ Physical deletion of output files is necessary to avoid collisions if the produc
 
 First, prevent the cron job from relaunching anything. Edit `active_productions.txt` and comment out the relevant line:
 ```
-# /sphenix/u/sphnxpro/Production2026/run3pp_tracking_ana548_FieldMapTest_v666/dir_run3pp_tracking_ana548_FieldMapTest_v666/pilots/autopilot_run3pp_tracking_physics_ana548_FieldMapTest_v666.yaml
+# /sphenix/u/sphnxpro/Production2026/run3oo_tracking_ana561_2025p013_v001/thisProd/pilots/autopilot_run3oo_tracking_physics_ana561_2025p013_v001.yaml
 ```
 
 Then, on each relevant submission host, find running production processes:
@@ -362,24 +369,24 @@ ps axo pid,args | grep -E 'dispatch|production_control|create_submission|dstspid
 ```
 
 Kill everything referencing this production: `dispatch_productions.py` (it idles and respawns from cron in minutes, but if our job is queued it may dispatch it first), `production_control.py` for our autopilot yaml, and any `create_submission.py`, `dstspider.py`, or `histspider.py` referencing our three rules:
-- `ana548_STREAMING_EVENT_run3pp_v666`
-- `ana548_TRKR_CLUSTER_run3pp_v666`
-- `ana548_TRKR_SEED_run3pp_v666`
+- `ana561_STREAMING_EVENT_run3oo`
+- `ana561_TRKR_CLUSTER_run3oo`
+- `ana561_TRKR_SEED_run3oo`
 
 Repeat on all submission hosts listed in the autopilot yaml.
 
 Also delete the submission helper directories (the `submitdir` from the autopilot yaml, one per rule):
 ```bash
-rm -r /sphenix/data/data02/sphnxpro/production/run3pp/submission/ana548_STREAMING_EVENT_run3pp_v666/
-rm -r /sphenix/data/data02/sphnxpro/production/run3pp/submission/ana548_TRKR_CLUSTER_run3pp_v666/
-rm -r /sphenix/data/data02/sphnxpro/production/run3pp/submission/ana548_TRKR_SEED_run3pp_v666/
+rm -r /sphenix/data/data02/sphnxpro/production/run3oo/submission/ana561_STREAMING_EVENT_run3oo/
+rm -r /sphenix/data/data02/sphnxpro/production/run3oo/submission/ana561_TRKR_CLUSTER_run3oo/
+rm -r /sphenix/data/data02/sphnxpro/production/run3oo/submission/ana561_TRKR_SEED_run3oo/
 ```
 
 And any leftover DST lists and lock files:
 ```bash
-rm /sphenix/data/data02/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/ana548_STREAMING_EVENT_run3pp_v666_dstlist*
-rm /sphenix/data/data02/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/ana548_TRKR_CLUSTER_run3pp_v666_dstlist*
-rm /sphenix/data/data02/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/ana548_TRKR_SEED_run3pp_v666_dstlist*
+rm /sphenix/data/data02/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/ana561_STREAMING_EVENT_run3oo_dstlist*
+rm /sphenix/data/data02/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/ana561_TRKR_CLUSTER_run3oo_dstlist*
+rm /sphenix/data/data02/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/ana561_TRKR_SEED_run3oo_dstlist*
 ```
 
 ### Step 1 — Remove jobs from condor
@@ -389,11 +396,11 @@ Check what is queued:
 condor_q -batch
 ```
 
-Then remove each batch by its `JobBatchName` (format: `{user}.{rule}_{dataset}_{outtriplet}`):
+Then remove each batch by its `JobBatchName` (format: `{branch}.{rule}_{outtriplet}`):
 ```bash
-condor_rm -const 'JobBatchName=="devkolja.ana548_STREAMING_EVENT_run3pp_v666_run3pp_ana548_FieldMapTest_v666"'
-condor_rm -const 'JobBatchName=="devkolja.ana548_TRKR_CLUSTER_run3pp_v666_run3pp_ana548_FieldMapTest_v666"'
-condor_rm -const 'JobBatchName=="devkolja.ana548_TRKR_SEED_run3pp_v666_run3pp_ana548_FieldMapTest_v666"'
+condor_rm -const 'JobBatchName=="main.ana561_STREAMING_EVENT_run3oo_ana561_2025p013_v001"'
+condor_rm -const 'JobBatchName=="main.ana561_TRKR_CLUSTER_run3oo_ana561_2025p013_v001"'
+condor_rm -const 'JobBatchName=="main.ana561_TRKR_SEED_run3oo_ana561_2025p013_v001"'
 ```
 
 ### Step 2 — Delete output files on Lustre
@@ -401,18 +408,18 @@ condor_rm -const 'JobBatchName=="devkolja.ana548_TRKR_SEED_run3pp_v666_run3pp_an
 Lustre requires a two-step deletion: first unlink all files, then remove the directory tree. Standard `rm -rf` is much slower on Lustre.
 
 ```bash
-lfs find /sphenix/lustre01/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/ -type f -print0 | xargs -0 munlink
-rm -r /sphenix/lustre01/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/
+lfs find /sphenix/lustre01/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/ -type f -print0 | xargs -0 munlink
+rm -r /sphenix/lustre01/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/
 ```
 
 A few notes:
 - `lfs find` does not support tab completion — use `find` or `ls` to verify the path before running.
-- To be surgical, target a subdirectory rather than the whole triplet, e.g. `.../ana548_FieldMapTest_v666/DST_TRKR_CLUSTER/`.
+- To be surgical, target a subdirectory rather than the whole triplet, e.g. `.../ana561_2025p013_v001/DST_TRKR_CLUSTER/`.
 - This can take a very long time for large productions.
 
 Corresponding logs and histograms live under the same path structure on GPFS (`data02` or `data03` instead of `lustre01`). Standard `rm` works there:
 ```bash
-rm -r /sphenix/data/data02/sphnxpro/production/run3pp/physics/ana548_FieldMapTest_v666/
+rm -r /sphenix/data/data02/sphnxpro/production/run3oo/physics/ana561_2025p013_v001/
 ```
 
 ### Step 3 — File catalog cleanup
@@ -422,26 +429,30 @@ Connect to the file catalog database:
 psql -d FileCatalog -h sphnxdbmaster.sdcc.bnl.gov
 ```
 
-For each DST type, delete from `files` first, then `datasets`. If unsure about the scope, probe with a `SELECT` before deleting. Repeat for all three types:
+For each DST type, delete from `files` first, then `datasets`. Always constrain by both `tag` and `dataset`; the example below uses `tag='ana561_2025p013_v001'` and `dataset='run3oo'`. Use a leading and trailing `%` in the `dsttype` pattern, without an extra `_` before the final `%`. If unsure about the scope, probe with a `SELECT` before deleting. Repeat for all relevant types:
 ```sql
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_STREAMING_EVENT_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_STREAMING_EVENT_%';
+delete from files using datasets where lfn=filename and datasets.dataset='run3oo' and datasets.tag='ana561_2025p013_v001' and datasets.dsttype like '%DST_STREAMING_EVENT%';
+delete from datasets where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_STREAMING_EVENT%';
 
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_CLUSTER_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_CLUSTER_%';
+delete from files using datasets where lfn=filename and datasets.dataset='run3oo' and datasets.tag='ana561_2025p013_v001' and datasets.dsttype like '%DST_TRKR_CLUSTER%';
+delete from datasets where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_TRKR_CLUSTER%';
 
-delete from files using datasets where lfn=filename and tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
-delete from datasets where tag='ana548_FieldMapTest_v666' and dsttype like 'DST_TRKR_SEED_%';
+delete from files using datasets where lfn=filename and datasets.dataset='run3oo' and datasets.tag='ana561_2025p013_v001' and datasets.dsttype like '%DST_TRKR_SEED%';
+delete from datasets where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_TRKR_SEED%';
 ```
+
+Some production steps write additional file catalog types. Include these in the file catalog cleanup for the corresponding primary type:
+- `DST_JETCALO`: also delete `DST_Jet` and `HIST_JETQA`
+- `DST_CALOFITTING`: also delete `DST_ZDC_RAW`, `DST_SEPD_RAW`, and `HIST_CALOFITTINGQA`
 
 Also clean up the production database:
 ```bash
 psql -d Production -h sphnxproddbmaster.sdcc.bnl.gov -U argouser
 ```
 ```sql
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_STREAMING_EVENT_%';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_CLUSTER';
-delete from production_jobs where tag='ana548_FieldMapTest_v666' and dsttype like '%DST_TRKR_SEED';
+delete from production_jobs where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_STREAMING_EVENT%';
+delete from production_jobs where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_TRKR_CLUSTER%';
+delete from production_jobs where dataset='run3oo' and tag='ana561_2025p013_v001' and dsttype like '%DST_TRKR_SEED%';
 ```
 
 With physical files and both databases cleared, the system is in a clean state. To restart the production, simply uncomment the line in `active_productions.txt` — the cron job will pick it up within minutes.
